@@ -1,0 +1,3264 @@
+\documentclass[a4paper, landscape, 17pt, paper]{extarticle}
+% ADMINISTRATION
+% cp cn.Rnw ../asuR/inst/doc/coursenotes.Rnw       %only the paper form!
+% cp cn.pdf ../asuR/inst/doc/coursenotes.pdf       %only the paper form!
+% cp cn.cfg ../asuR/inst/doc/coursenotes.cfg 
+% cp fancyvrb.cfg ../asuR/inst/doc/fancyvrb.cfg
+% and all plots!
+%
+%\VignetteIndexEntry{coursenotes}
+\setlength{\parindent}{0mm} 
+\usepackage{mySlides}
+\usepackage{myR}
+\usepackage{float}
+\usepackage{bibentry}
+%\fontencoding{OT1}\fontfamily{cmss8}\fontshape{m}\fontsize{14.4}{16}\selectfont
+% \usepackage[compact]{pdfseminar}% for a compact pdf file, but requires
+% post-processing with pdffix
+\usepackage{pdfseminar}% needs no post-processing but file size may be large
+\usepackage{coursenotes}
+% =================================
+\begin{document}
+% this can be redefined: in Sweave.sty it is defined but empty!
+\renewenvironment{Schunk}{\vspace{-5mm}}{\vspace{0mm}}
+\nobibliography*
+% ============================================================================= BEGIN DOCUMENT
+% _____________________________________________________________________________
+\ttl{asuR -- advanced statistics using R}
+\begin{newttl}
+% \begin{Citation}{Fred Mosteller}
+% It is easy to lie with statistics, but easier to lie without them.
+% \end{Citation}
+\begin{Citation}{}
+``The aim of computing is insight, not numbers.''
+\end{Citation}
+\end{newttl}
+%_____________________________________________________________________________ INTRODUCING R
+\ttl{Introducing R}
+% _________________________________ general
+\begin{newttl}
+\vspace{1.5cm}%manual
+\begin{Citation}{John M. Chambers}
+``\textsf{S} is a programming language and environment for all kinds of computing involving data. It has a simple goal: to turn ideas into software, quickly and faithfully.''
+\end{Citation}
+\vspace{1.5cm}%manual
+\begin{mylist}
+\item \textsf{S} is a language for ``programming with data''.\\ \textsc{John Chambers} of Bell Labs has been its main developer for more than two decades.
+\item \R is an Open Source system originally written by \textsc{Ross Ihaka} and \textsc{Robert Gentleman} at the University of Auckland in about 1994.
+\item \R is not unlike \textsf{S} (actually they are very similar!)
+\item \R is now developed by a small core team, for all details see: \texttt{www.r-project.org}.
+\end{mylist}
+\end{newttl}
+% _________________________________ general
+\begin{nextttl}
+\vspace{1.5cm}%manual
+\myitem{Commands to \R are \emph{expressions} or \emph{assignments}.}
+
+\hspace{3cm}\begin{minipage}[t]{0.6\textwidth}
+expression
+
+\begin{Verbatim}
+4/3 * pi * (27)^3                       : [1] 82447.96
+\end{Verbatim}
+
+assignment
+
+\begin{Verbatim}
+a <- 27
+\end{Verbatim}
+\end{minipage}
+
+\myitem{Everything within the R language is an \emph{object}}.\\ 
+Normally \R objects are accessed by their name, which is made up from \emph{letters}, \emph{digits} $0-9$ in non-initial position, or a \emph{period, ``.'',} that acts like a letter. \R is case sensitive.
+
+\myitem{Every object has a \emph{class}.}
+
+
+\end{nextttl}
+% _________________________________ HELP
+\sbttl{help \& comment}
+\begin{newsbttl}
+
+\myitem{getting help}\\
+
+ All functions and data sets in \R have a documentation!
+For information on a function or data set,
+\begin{myRcode}{}
+?\myRarg{function-name},
+\end{myRcode}
+which is equivalent to
+\begin{myRcode}{}
+help(\myRarg{function-name}).
+\end{myRcode}
+
+To search all help pages for a specific term
+\begin{myRcode}{}
+help.search(\gaense\myRarg{term}\gaense).
+\end{myRcode}
+Help pages can also be displayed in a HTML version, therefore
+\begin{myRcode}{}
+help.start().
+\end{myRcode}
+
+
+\vspace{1.5cm}%manual
+
+\myitem{writing comments}\\
+
+A line starting with \Verb|#| is treated as a comment and not processed.
+
+
+\end{newsbttl}
+%_________________________________ WORKSPACE
+\sbttl{your workspace}
+\begin{newsbttl}
+Objects are normally stored in a workspace.
+\begin{Rlist}
+\item[ls()] lists all objects currently in your workspace
+\item[rm(\Rarg{object})] removes \Rarg{object} from your workspace
+\item[save(\Rarg{object}, file=\Rarg{path/file})] saves an \Rarg{object} to a \Rarg{file}
+\item[load(\Rarg{path/file})] loads an \Rarg{object} from a \Rarg{file}
+\item[save.image()] saves your workspace to a file called \Rcode{.RData} in your working directory. Happens also if you type \Verb|q("yes")|.
+\item[getwd()] shows the path of your current working directory
+\item[setwd(\Rarg{path})] allows you to set a new \Rcode{path} for your current working directory
+\end{Rlist}
+\end{newsbttl}
+%_________________________________ PACKAGES
+\sbttl{additional packages}
+\begin{newsbttl}
+The functionality of an \R installation can be extended by packages.
+Additional packages provide you functions, data sets, and the corresponding documentation.
+A growing number of packages is available from CRAN\\
+\begin{center}
+\texttt{CRAN.r-project.org}
+\end{center}
+
+\begin{Rlist}
+\item[library()] shows all packages installed on your system
+\item[library(asuR)] loads an already installed package (here \Rpack{asuR}) %To make functions and data set of installed packages available (Load them to your search path). %After installing you have to load a package to the search path. 
+(\Rpack{asuR} is the package that accompanies this course)
+\item[library(help=asuR)] displays all functions, data sets, and vignettes in a package (here \Rpack{asuR})
+\item[data()] shows the data sets of all installed packages
+\item[data(package="asuR")] shows data set(s) from a package, here \Rpack{asuR}
+\item[data(pea)] loads the data set ``pea'' to your workspace (therefore the package \Rpack{asuR} has to be loaded)
+\item[vignette()] shows vignettes from all installed packages
+\item[vignette(package="asuR")] shows vignette(s) from a package (here \Rpack{asuR})
+\item[vignette("coursenotes")] opens the pdf file with the course notes
+\end{Rlist}
+\end{newsbttl}
+%_________________________________ VECTOR
+\sbttl{vector}
+\begin{newsbttl}
+\begin{Rlist}
+\item[c()] creates a vector of the specified elements (\Rcode{c} for concatenate)
+<<vector>>=
+genus <- c("Daphnia", "Boletus", "Hippopotamus", "Salmo", "Linaria", "Ixodes", "Apis")
+species <- c("magna", "edulis", "amphibius", "trutta", "alpina", "ricinus", "mellifera")
+weight <- c(0.001, 100, 3200000, 1000, 2.56, 0.001, 0.01)
+legs <- as.integer(c(0,0,4,0,0,8,6))
+animal <- c(TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+@
+\item[length()] returns the length of a vector
+
+\item[paste()] takes two vectors and concatenates them as characters
+
+\begin{Verbatim}
+name <- paste(genus, species)
+\end{Verbatim}
+\item[seq()] to generate sequences of numbers
+
+\begin{Verbatim}
+seq(from=4, to=7)                       : [1] 4 5 6 7
+4:7                                     # short form of the previous
+seq(from=4, to=7, by=0.5)               : [1] 4.0 4.5 5.0 5.5 6.0 6.5 7.0
+\end{Verbatim}
+\item[rep()] to replicate elements of a vector
+
+\begin{Verbatim}
+rep(c(2,4,6), times=3)                  : [1] 2 4 6 2 4 6 2 4 6
+rep(c(2,4,6), each=3)                   : [1] 2 2 2 4 4 4 6 6 6
+rep(c(2,4,6), times=3, each=2)          : [1] 2 2 4 4 6 6 2 2 4 4 6 6 2 2 4 4 6 6
+\end{Verbatim}
+\item[sample()] takes a random sample of a vector
+
+\begin{Verbatim}
+sample(genus)                           : [1] "Boletus"      "Daphnia"  "Ixodes"  "Salmo"
+                                          [5] "Hippopotamus" "Linaria"  "Apis"  
+\end{Verbatim}
+\end{Rlist}
+\end{newsbttl}
+
+
+%_________________________________ FACTOR
+\sbttl{factor}
+\begin{newsbttl}
+A special type of a vector that usually stores categorical variables.
+\begin{Rlist}
+\item[factor()] makes a factor out of a vector
+
+<<factor>>=
+kingdom <- factor(c("animal", "fungi", "animal", "animal", "plant", "animal", "animal"))
+@ 
+
+\item[levels()] provides a character vector with the levels of a factor
+\end{Rlist}
+Internally a factor is stored as a set of codes and an attribute giving the corresponding levels. 
+
+\begin{Verbatim}
+unclass(kingdom)                        : [1] 1 2 1 1 3 1 1
+                                        : attr(,"levels")
+                                        : [1] "animal" "fungi"  "plant" 
+\end{Verbatim}
+
+If you take a subset of a factor always all levels of a factor are included, whether they are in the subset or not.
+
+\begin{Verbatim}
+levels(kingdom[1:2])                    : [1] "animal" "fungi"  "plant" 
+\end{Verbatim}
+
+To exclude unused levels from the subset we can use
+\begin{Verbatim}
+levels(kingdom[1:2, drop=TRUE])         : [1] "animal" "fungi" 
+\end{Verbatim}
+\end{newsbttl}
+%_________________________________ DATAFRAME
+\sbttl{data.frame}
+\begin{newsbttl}
+Used to store data. It is a list of variables, all of the same length, possibly of different types.
+\begin{Rlist}
+\item[data.frame()] a function to generate data frames
+<<data.frame>>=
+bio <- data.frame(name=I(paste(genus,species)), weight_g=weight, leg_no=legs, animal=animal, kingdom=kingdom)
+# I() prevents that species (a vector of class character) is converted to a factor
+@ 
+\item[names()] displays the names of the variables in a data frame
+\item[row.names()] displays the row names
+\item[str()] a useful summary of the structure of a data frame
+\item[summary()] provides a summary of all variables in a data frame
+\item[attach()] makes the variables of a data frame accessible by their name
+\item[detach()] the inverse
+\item[write.table()] to write a data frame to a text file
+<<data.frame::write.table, eval=FALSE>>=
+write.table(bio, file="~/temp/bio.txt", row.names=FALSE, sep="\t")
+@ 
+\item[read.table()] to read a data frame from a text file
+<<data.frame::read.table, eval=FALSE>>=
+bio.new <- read.table(file="~/temp/bio.txt", header=TRUE, sep="\t", row.names="name", colClasses=c("character", "numeric", "integer", "logical", "factor"))
+@ 
+\end{Rlist}
+\end{newsbttl}
+%_________________________________ MATRIX ARRAY
+\sbttl{matrix \& array}
+\begin{newsbttl}
+A matrix has all its arguments of the same type and always two dimensions. An array is like a matrix but with a flexible number of dimensions.
+\begin{Rlist}
+\item[matrix()] a function to create a matrix from a vector
+\item[rbind()] takes vectors and binds them as rows together
+\item[cbind()] takes vectors and binds them as columns together
+
+<<matrix>>=
+mat <- matrix(1:12, nrow=3, ncol=4, byrow=TRUE)
+mat1 <- matrix(c(1,5,9,2,6,10,3,7,11,4,8,12), nrow=3, ncol=4)
+mat2 <- rbind(c(1:4), c(5:8), c(9:12))
+mat3 <- cbind(c(1,5,9), c(2,6,10), c(3,7,11), c(4,8,12))
+@ 
+\item[dim()] returns the dimensions 
+\item[dimnames()] to give a name to the columns and rows
+<<matrix::dim.names>>=
+dimnames(mat) <- list(c("first row", "second row", "last row"), paste("c_",1:4,sep=""))
+@ 
+\end{Rlist}
+\end{newsbttl}
+% _________________________________ LIST
+\sbttl{list}
+\begin{newsbttl}
+A list is a collection of \emph{components} that can be from different classes and of different length.
+<<list>>=
+organisms <- list(animals=list(genera=c("Daphnia", "Hippopotamus", "Salmo", "Ixodes", "Apis"), publications=110), plants=list(genera="Linaria", publications=50), fungi="Boletus")
+@ 
+
+  \SaveVerb{exext}=[[=
+  \SaveVerb{ext}=[=
+  \SaveVerb{dola}=$=
+\begin{Rlist}
+\item[\protect\UseVerb{dola}] to extract components by their name
+
+\begin{Verbatim}
+organisms$animals$genera                : [1] "Daphnia" "Hippopotamus" "Salmo" "Ixodes" "Apis"        
+                                        # a character vector of length five
+\end{Verbatim}
+\item[\protect\UseVerb{exext}] to extract a component by its position
+\begin{Verbatim}
+organisms[[1]][[1]]                     : [1] "Daphnia" "Hippopotamus" "Salmo" "Ixodes" "Apis"        
+                                        # a character vector of length five
+\end{Verbatim}
+\item[\protect\UseVerb{ext}] to extract a sub-vector
+
+\begin{Verbatim}
+organisms[[1]][1]                       : $genera
+                                        : [1] "Daphnia" "Hippopotamus" "Salmo" "Ixodes" "Apis"
+                                        # a list of length one
+\end{Verbatim}
+\end{Rlist}
+\end{newsbttl}
+<<>>=
+@ 
+% _________________________________ FUNCTIONS
+\sbttl{function}
+\begin{newsbttl}
+
+\begin{myRcode}{} \myRarg{function-name} \assign function(\myRarg{argument1}, \myRarg{argument2, ...})\{ \end{myRcode}
+
+\begin{myRcode}{}\hspace{2cm} \myRarg{function.body} \end{myRcode}
+
+\begin{myRcode}{} \} \end{myRcode}
+
+
+An example for calculating the t value according to
+\begin{displaymath}
+  \frac{(\bar{X}_1 -\bar{X}_2)-(\mu_1-\mu_2)}{S_{p}\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}} \sim t_{n_1+n_2-2}\qquad\mathrm{with,} \quad S_{p}^2=\frac{(n_1-1)S_1^2+(n_2-1)S_2^2}{n_1+n_2-2}
+\end{displaymath}
+
+<<functions>>= 
+my.t <- function(mean1, mean2, s1, s2, n1, n2, mu.diff=0){
+s.pooled <- ((n1-1)*s1^2 + (n2-1)*s2^2)/(n1+n2-2)
+t <- ((mean1-mean2)-(mu.diff))/(sqrt(s.pooled*(1/n1 + 1/n2)))
+cat(round(t, 2))
+cat(paste(": compare to a t dist. with", n1+n2-2, "df \n"))
+}
+@ 
+The function can then be called with, e.g.,
+\begin{Verbatim}
+my.t(mean1=24, mean2=18, s1=3, s2=4, n1=34, n2=50)                : 7.43; compare to a t dist. with 82 df
+my.t(mean1=24, mean2=18, s1=3, s2=4, n1=34, n2=50, mu.diff=4)     : 2.48; compare to a t dist. with 82 df
+\end{Verbatim}
+
+\end{newsbttl}
+% _________________________________ PRACTICALS I
+\begin{ttlex}
+  \begin{exlist}
+    %% 1
+  \item Put \Rcode{n=10} and compare \Rcode{1:n-1} and \Rcode{1:(n-1)}.
+    %% 2
+  \item How can you produce a vector like,
+    \begin{exsblist}
+    \item \Verb|1 1 2 2 3 3|
+    \item \Verb|1 2 1 2 1 2|
+    \item \Verb|1 1 2 2 3 3 1 1 2 2 3 3 1 1 2 2 3 3|
+    \end{exsblist}
+<<introduction::ex2, eval=FALSE, echo=FALSE>>=
+    rep(1:3, each=2)
+    rep(1:2, times=3)
+rep(1:3, each=2, times=3)
+@ 
+    %% 3
+    \item How can you produce a character vector containing,
+    \begin{exsblist}
+    \item \Verb|"trt:1" "trt:1" "trt:2" "trt:2" "trt:3" "trt:3"|
+    \item \Verb|"ind:1" "ind:2" "ind:1" "ind:2" "ind:1" "ind:2"|
+    \end{exsblist}
+<<introduction::ex3, eval=FALSE, echo=FALSE>>=
+    paste("trt:",rep(1:3, each=2), sep="")
+    paste("ind:", rep(c(1,2), times=3), sep="")
+@ 
+    %% 4  
+    \item Make a data frame with a variable called ``treatment'' and ``individual'' and use therefore the character vectors of the previous exercise.
+\begin{exsblist}
+\item Check the dimensions of the data frame you created.
+\item What is the class of the two variables within the data frame?
+\item Add to the existing data frame a column with values from 2 to 7.
+\item Save the data frame to file called ``experiment.Rdata'', remove the data frame from your workspace, and reload it from the file.
+\item Save the data frame to a tabulator separated text file called ``experiment.txt'', remove the data frame from your workspace, and read it in again.
+\end{exsblist}
+  \end{exlist}
+<<introduction::ex4, eval=FALSE, echo=FALSE>>=
+experiment <- data.frame(treatment=paste("trt:",rep(1:3, each=2), sep=""), individual= paste("ind:", rep(c(1,2), times=3), sep=""))
+# dimension
+dim(experiment)
+# class
+str(experiment)
+# add column
+experiment <- cbind(experiment, 2:7)
+# save .Rdata
+save(experiment, file="~/Desktop/experiment.Rdata")
+rm(experiment)
+load(file="~/Desktop/experiment.Rdata")
+# write read .txt
+write.table(experiment, file="~/Desktop/experiment.txt")
+rm(experiment)
+experiment <- read.table(file="~/Desktop/experiment.txt", header=TRUE)
+@
+\end{ttlex}
+% ============================================================================= INDEXING
+\ttl{indexing}
+\begin{newttl}
+Many data manipulations in \R rely on indexing.
+Indexing is used to address a subsets of vectors, matrices, or data frame. 
+The general form for using an index is
+\begin{myRcode}{.}
+ object[\myRarg{index-vector}]
+\end{myRcode}
+
+Indexing is used to select a subset of an object,
+\begin{myRcode}{,}
+ new.object <- object[\myRarg{index-vector}]
+\end{myRcode}
+
+to replace a subset of an object,
+\begin{myRcode}{,}
+ object[\myRarg{index-vector}] <- new.element
+\end{myRcode}
+
+or to sort an object (see below for an example).
+
+
+
+
+On the following pages we will see what types the \myRarg{index-vector} can take (for vectors and data frames \& matrices respectively).
+
+The examples below always apply to the following vector object
+<<indexing>>=
+x <- c(11, 44, 33, NA, 22)
+@ 
+
+\end{newttl}
+% _________________________________
+\sbttl{vectors}
+\begin{newsbttl}
+
+\myitem{logical vector}
+    \begin{mysblist}
+    \item must be of the same length as the vector
+    \item values corresponding to \Rcode{TRUE} are included; corresponding to \Rcode{FALSE} are omitted (\Rcode{NA} inserts an \Rcode{NA} at the corresponding position)
+      
+\begin{Verbatim}
+x[c(TRUE, FALSE, FALSE, FALSE, TRUE)]   : [1] 11 22
+x[!is.na(x)]                            : [1] 11 44 33 22
+x[x>=33]                                : [1] 44 33 NA
+x[(x==33 | x==44) & !is.na(x)]          : [1] 44 33
+\end{Verbatim}
+\end{mysblist}
+
+\myitem{vector of positive integers (factors)}
+    \begin{mysblist}
+    \item the values of the integers must be smaller or equal to the length of the vector
+    \item the corresponding elements are selected and concatenated in the order they were selected
+    \item for factors as index vector (works like: x[unclass(factor)])
+
+\begin{Verbatim}
+x[c(1,2,5)]                             : [1] 11 44 22
+x[1:3]                                  : [1] 11 44 33
+x[order(x)]                             : [1] 11 22 33 44 NA
+\end{Verbatim}
+\end{mysblist}
+\end{newsbttl}
+%___________
+\begin{nextsbttl}
+\myitem{vector of negative integers}
+    \begin{mysblist}
+    \item the absolute values of the integers must be smaller or equal to the length of the vector
+    \item the corresponding elements are excluded
+
+\begin{Verbatim}
+x[c(-1,-2,-5)]                          : [1] 33 NA
+\end{Verbatim}
+\end{mysblist}
+
+\myitem{empty}
+\begin{mysblist}
+\item all components are selected 
+\item identical to 1:length(object)
+  
+\begin{Verbatim}
+x[]                                     : [1] 11 44 33 NA 22
+\end{Verbatim}
+\end{mysblist}
+
+\myitem{vector of character strings}
+    \begin{mysblist}
+    \item only applies if object has names
+    \item the corresponding elements are selected and concatenated in the order they were selected
+
+\begin{Verbatim}
+names(x) <- c("first", "largest", "middle", "non.available", "second")
+x[c("largest", "first")]
+                                        : largest   first 
+                                        :      44      11 
+\end{Verbatim}
+\end{mysblist}
+\end{nextsbttl}
+% _________________________________ 
+\sbttl{data frames \& matrices}
+\begin{newsbttl}
+Data frames and matrices can be indexed by giving two indices ([\myRarg{rows,columns}]).
+\begin{Verbatim}
+bio[bio$animal, ]                       # all rows where animal is TRUE
+bio[bio$weight_g>1, "name"]             # name of all organisms heavier >1g
+\end{Verbatim}
+
+Columns in a data frame are often selected with the \Rcode{\$} operator
+\begin{Verbatim}
+bio$names                               # equivalent to bio[,"names"]
+\end{Verbatim}
+<<>>=
+@ 
+\myitem{matrix}\\
+An array (and therefore also a matrix) can be indexed by a $m \times k$ matrix.
+Each of the $m$ rows of this matrix is used to select one element.
+\begin{Verbatim}
+> mat <- matrix(1:9, ncol=3)            :      [,1] [,2] [,3]
+                                        : [1,]    1    4    7
+                                        : [2,]    2    5    8
+                                        : [3,]    3    6    9
+select <- rbind(c(2,1),c(3,1),c(3,2))
+mat[select]                             : [1] 2 3 6
+\end{Verbatim}
+
+
+
+If you extract elements from a data frame or a matrix, the result is coerced to the lowest possible dimension.
+This default behavior can be changed by adding \Rcode{drop=FALSE},
+\begin{Verbatim}
+bio[,"kingdom"]                            # returns a vector
+bio[,"kingdom", drop=FALSE]                # returns a data frame
+\end{Verbatim}
+\end{newsbttl}
+% _________________________________ PRACTICALS II
+\begin{ttlex}
+  \begin{exlist}
+    %% 1
+  \item Create the following matrix,
+    \begin{Verbatim}
+           [,1] [,2] [,3] [,4]
+      [1,]    1    5    9   13
+      [2,]    2    6   10   14
+      [3,]    3    7   11   15
+      [4,]    4    8   12   16
+    \end{Verbatim}
+    \begin{exsblist}
+    \item Extract the third column.
+    \item Extract the diagonal elements.
+    \item Extract the anti diagonal elements.
+<<indexing::ex1, eval=FALSE, echo=FALSE>>=
+mat <- matrix(1:16, nrow=4)
+# third column
+mat[,3]
+# diagonal elements
+diagonal <- diag(mat)
+# or by hand
+dia <- cbind(c(1:4),c(1:4))
+diagonal <- mat[dia]
+# antidiagonal elements
+antidia <- cbind(c(1:4), c(4:1))
+antidiagonal <- mat[antidia]
+@ 
+\end{exsblist}
+  %% 2
+  \item Create a vector with all integers from 1 to 1000 and replace all even numbers by their inverse.
+<<indexing::ex2, eval=FALSE, echo=FALSE>>=
+vec <- 1:1000
+vec[seq(from=2, to=1000, by=2)] <- 1/(vec[seq(from=2, to=1000, by=2)])
+@ 
+  %% 3
+\item Load the data frame ``swiss'' from the package \Rpack{datasets}.
+  \begin{exsblist}
+  \item Read the associated documentation.
+  \item Sort the data frame by the variable ``Agriculture''.
+  \item Add a factor called ``religion'' to the data frame which has the level ``catholic'', if ``Catholic'' is larger or equal to 50, and ``protestant'' otherwise.
+  \item Sort the data frame by the variable ``religion'' and ``Agriculture''
+  \item Sort the data frame by the provinces (row.names).
+  \item Put the rows of the data frame in a random order
+  \item Remove the column ``Education''
+  \end{exsblist}
+<<indexing::ex 3, eval=FALSE, echo=FALSE>>=
+# read doc
+?swiss
+# sort agriculture
+swiss[order(swiss$Agriculture),]
+# add religion
+swiss <- cbind(swiss, religion=factor("protestant", levels=c("catholic", "protestant")))
+swiss$religion[swiss$Catholic>=50] <- "catholic"
+# sort religion and agriculture
+swiss[order(swiss$religion, swiss$Agriculture),]
+# sort provinces
+swiss[order(row.names(swiss)),]
+# random order
+swiss[sample(row.names(swiss)),]
+# remove education
+swiss$Education <- NULL
+@ 
+\end{exlist}
+\end{ttlex}
+% ============================================================================= GRAPHICS
+\ttl{graphics}
+\begin{newttl}
+\begin{Citation}{Edward R Tufte}
+Graphical excellence is that which gives to the viewer the greatest number of ideas in the shortest time with the least ink in the smallest space.
+\end{Citation}
+
+The graphics system of \R is very powerful. You can get a sample gallery with
+\begin{Verbatim}
+demo(graphics).
+\end{Verbatim}
+A very large gallery with many complex examples is at\\
+\texttt{http://addictedtor.free.fr/graphiques/}.
+\end{newttl}
+% _________________________________ perception
+\sbttl{human graphical perception}
+\begin{newsbttl}
+\begin{center}
+\begin{tabular}{ll}
+Rank&Aspect\\
+\hline
+1&Position along a common scale\\
+2&Position on identical but nonaligned scales\\
+3&Length\\
+4&Angle\\
+5&Slope\\
+6&Area\\
+7&Volume\\
+8&Color hue (poor ordering, good discrimination)\\
+\hline
+\end{tabular}
+
+\citep{Clev85}
+\end{center}
+\end{newsbttl}
+% _________________________________ some ideas
+\sbttl{some ideas}
+
+\begin{newsbttl}
+
+\vspace{1cm}
+  \begin{mylist}
+  \item[general]
+    \begin{mysblist}
+    \item make data stand out, avoid superfluity, decrease the ink to information ratio
+    \item show data (e.g. \Rfunc{rug}), if too numerous, consider showing a random sample
+    \item induce the viewer to think about the substance rather than about methodology
+    \item directly show what is in the focus of your study \\
+(e.g. show the difference between treatments and the corresponding confidence interval instead of only the mean (and confidence intervals) for each treatment)
+    \end{mysblist}
+%
+  \item[scale]
+    \begin{mysblist}
+    \item inclusion of zero on a axis has to be thought about carefully
+%    \item changes of multiplicative factors are shown on a log scale
+    \end{mysblist}
+%
+%   \item[scale]
+%     \begin{mysblist}
+%     \item inclusion of zero on a axis has to be thought about carefully
+% %    \item changes of multiplicative factors are shown on a log scale
+%     \end{mysblist}
+  \end{mylist}
+\end{newsbttl}
+% _________________________________ Error bars
+\sbttl{error bars}
+\begin{newsbttl}
+\myitem{error bars can show:}
+\begin{mysblist}
+\item sample standard deviation of the data
+\item estimate of the standard deviation of a statistic (often called \emph{standard error})
+\item confidence intervals for a statistical quantity
+\end{mysblist}
+\myplot{\mbox{}}{All four data sets have the same number of observations, the same mean and the same standard deviation. Mean and standard deviation of the mean (standard error) do often a poor job in conveying the distribution of the data.}{plots/example1.pdf}
+
+%\newplot{a}{b}{plots/example1.pdf}
+%%\begin{newplot}{\mbox{}}{FIG. All four data sets have the same number of observations, the same mean and the same standard deviation}
+%\begin{newplot}{
+%  \fbox\{\includegraphics{.4\textwidth]0=htdiw[plots/exampl}e1.pdf}newplot
+% \begin{mysblist}
+% \item Mean and standard deviation of the mean (standard error) do often a poor job in conveying the distribution of the data.
+% \end{mysblist}
+\end{newsbttl}
+% % _________________________________ IMPLICATIONS
+% \sbttl{implications}
+% \begin{newsbttl}
+% bar charts
+% \end{newsbttl}
+% _________________________________ TECHNICAL
+\sbttl{technically}
+\begin{newsbttl}
+\begin{mylist}
+\item[devices] The output is always directed to a particular device that dictates the output format.
+\item[graphics functions] The functions that are available can be divided into two categories,
+\begin{mysblist}
+\item[highlevel functions] create a new figure,
+\item[lowlevel functions] add something to an already existing figure.
+\end{mysblist}
+\end{mylist}
+\hspace{3cm}% manually
+
+\begin{mysblist}
+\item[Note:] In \R there are two distinct graphics systems, the traditional and the grid system. All the following explanations hold for the traditional graphics system only. Many details of both systems are explained in some detail by \citet{Murr05}.
+\end{mysblist}
+\end{newsbttl}
+% _________________________________ DEVICES
+\sbttl{devices}
+\begin{newsbttl}
+\begin{mylist}
+\item[hardcopy devices] to create a physical picture, e.g.,  \Verb|pdf()|, \Verb|png()|, \Verb|jpeg()|, \Verb|postscript()|
+\item[window devices] to create a graphic on a window system, e.g., \Verb|x11()|, \Verb|win.graph()|
+\end{mylist}
+You can see the features compiled into your build of R with
+\begin{Verbatim}
+capabilities()
+\end{Verbatim}
+To produce e.g. histogram in pdf format
+\begin{Verbatim}
+pdf(file="~/Desktop/myhistogram.pdf", width=4, height=3)
+hist(rnorm(100))
+dev.off()
+\end{Verbatim}
+
+Have a look at the documentation of a device, e.g., \Verb|?pdf|, to see possible customisations.
+
+\end{newsbttl}
+% _________________________________ HIGHLEVEL
+\sbttl{highlevel functions}
+\begin{newsbttl}
+\begin{Rlist}
+\item[plot()] scatterplots
+\item[pairs()] scatterplot matrix
+\item[hist()] histogram
+\item[boxplot()] boxplot
+\item[qqnorm()] normal quantile-quantile plot
+\item[qqplot()] general quantile-quantile plot
+\item[barplot()] barcharts
+\item[dotchart()] dotplot (continuous vs. categorical)
+\item[stripchart()] stripplots (one-dimentional scatterplot)
+\end{Rlist}
+
+an example:
+<<highlevel>>=
+y <- rnorm(100)
+qqnorm(y)
+qqnorm(y, xlab="theoretical quantiles", ylab="sample quantiles", main="normal quantile--quantile plot", sub="(because I like it lower case)",  xlim=c(-3,3), ylim=c(-3,3))
+@ 
+\end{newsbttl} 
+% _________________________________ LOWLEVEL
+\sbttl{lowlevel functions}
+\begin{newsbttl}
+\begin{Rlist}
+\item[abline()] adding a line definded by the form $a + bx$ (\emph{h=}, \emph{v=}, for horizontal and vertical lines)
+\item[lines()] adding lines
+\item[qqline()] adding a line to a normal quantile plot through the first and third quantile
+\item[points()] adding points
+\item[box()] adding box
+\item[text()] adding text to the plot
+\item[mtext()] adding text into the margin
+\item[title()] adding a title
+\item[legend()] adding a legend
+\item[axis()] adding axis
+\end{Rlist}
+
+an example, continued:
+<<lowlevel>>=
+qqline(y)
+@ 
+\end{newsbttl}
+% _________________________________ PAR
+\sbttl{customizing}
+\begin{newsbttl}
+You can customize every aspect of the display using graphical parameters.
+\begin{mylist}
+\item[settings within par()] affect all subsequent graphical output
+\item[settings within a highlevel function] affect the whole plot
+\item[settings within a lowlevel function] affect only this element of a plot
+\end{mylist}
+
+an example, revisited:
+<<highlevel>>=
+par(fg="blue")
+y <- rnorm(100)
+qqnorm(y, col="red")
+qqline(y, col="green")
+@
+\end{newsbttl}
+% _________________________________ PAR SETTINGS
+\sbttl{settings within par() only}
+\begin{newsbttl}
+\begin{Rlist}
+\item[mfrow] numbers of figures on a page. \Verb|mfrow=c(2,3)| creates a 2-by-3 layout, filled row-by-row
+\item[mfcol] numbers of figures on a page. \Verb|mcol=c(2,3)| creates a x-by-y layout, filled column-by-column
+\item[pty] aspect ratio of the plot region. \Verb|pty="s"| for a squared plotting region
+\item[mai] size of figure margin in inches. \Verb|mai=c(4,3,2,1)| for a plot with 4,3,2,1 inches of margin at the c(bottom, left, top, right), respectively.
+\item[mar] like \Verb|mai| but in lines of text
+\item[omi] size of outer margin in inches (if several figures are printed on one page)
+\item[oma] size of outer margin in lines of text (if several figures are printed on one page)
+\end{Rlist}
+
+\end{newsbttl}
+% _________________________________ SETTINGS
+\sbttl{settings within par(), high-, or lowlevel functions}
+\begin{newsbttl}
+\begin{Rlist}
+\item[bg] background color
+\item[fg] foreground color (axis, boxes, etc.; called from within \Rfunc{par} also sets \Verb|col|)
+\item[col] color of lines, symbols, etc.
+\item[col.axis] color of axis annotation
+\item[col.lab] color of axis labels
+\item[col.main] color of main title
+\item[pch] data symbol type e.g., 1=circel, 2=triangle, 3=plus sign, 4=times sign, 5=diamond, etc.
+\item[cex] multiplier for the size of text
+\item[cex.axis] multiplier for the size of axis tick labels
+\item[cex.lab] multiplier for the axis label
+\item[cex.main] multiplier for the main title
+\item[lty] line type e.g., 0=blank, 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash, 6=twodash, etc.
+\item[lwd] line width
+\end{Rlist}
+\end{newsbttl}
+% _________________________________ COLOR
+\sbttl{color}
+\begin{newsbttl}
+There are three different ways to define a color
+\begin{mylist}
+\item[name] you can see what color names are understood by typing \Verb|colors()|, e.g., \Verb|"blue"|.
+\item[function \Rfunc{rgb}]  with the inensities of red, green and blue, e.g., \Verb|rgb(0,0,1)|.
+\item[hexadeximal string] of the form \Verb|"#RRGGBB"|, e.g., \Verb|"#0000FF"|.
+\end{mylist}
+an example, revisited again:
+<<highlevel>>=
+par(col="blue")
+y <- rnorm(100)
+qqnorm(y, col=rgb(1,0,0))
+qqline(y, col="#00FF00")
+@
+
+\end{newsbttl}
+% _________________________________ PRACTICALS III
+\begin{ttlex}
+\begin{exlist}
+% EX1
+\item Load the data set ``trees'' from the package \Rpack{datasets} to your workspace.
+\begin{exsblist}
+\item Produce a scatterplot of all variables (``Volume'', ``Girth'', and ``Height'') against each other.
+\item Produce a pdf-file (9cm x 13cm) with a scatterplot of ``Volume'' against ``Girth''.
+\item Customize the labels of the x-- and y--axis, the main title, the color etc. to produce a nice and informative plot.
+\end{exsblist}
+<<graphics::ex1, eval=FALSE, echo=FALSE>>=
+data(trees)
+# a)
+pairs(trees)
+xxp(trees)
+# b)
+pdf(file="~/Desktop/trees_example.pdf", width=13/2.540, height=9/2.540)
+plot(trees$Volume ~ trees$Girth)
+dev.off()
+# c)
+@ 
+% EX 2
+\item Load the data set ``swiss'' from the package \Rpack{datasets} to your workspace.
+\begin{exsblist}
+\item Produce a histogram of the variable ``Fertility''.
+\item Produce side by side a boxplot of ``Fertility'' for ``catholic'' and ``protestant'' (see the previous practicals).
+\end{exsblist}
+<<graphics::ex2, eval=FALSE, echo=FALSE>>=
+hist(swiss$Fertility)
+plot(swiss$religion, swiss$Fertility)
+@ 
+\end{exlist}
+\end{ttlex}
+%_________________________________ 
+\begin{nextex}
+% EX 3
+\begin{exlist}
+\setcounter{practicals}{2}
+\item Reconstruct the following scatterplot with the variables from data set ``swiss''.
+\begin{exsblist}
+\item How can this graph be improved?
+\end{exsblist}
+\end{exlist}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{plots/swissdata}
+\end{center}
+
+<<graphics::ex3, eval=FALSE, echo=FALSE>>=
+pdf("~/Desktop/swissdata.pdf", width=13/2.540, height=9/2.540)
+par(mar=c(4,4,4,4))
+plot(Agriculture~Fertility, data=swiss, main="swiss data (1888)", xlab="fertility", xlim=c(1,100), ylim=c(1,100), axes=FALSE, ylab="", col="red")
+points(Examination~Fertility, data=swiss, pch=3, xlim=c(1,100), col="blue")
+axis(side=1)
+axis(side=2, col.axis="red", col="red")
+mtext(text="agriculture", side=2, line=3,col="red")
+axis(side=4, col.axis="blue", col="blue")
+mtext(text="examination", side=4, line=3,col="blue")
+legend(x=10, y=90, legend=c("agriculture", "examination"), col=c("red", "blue"), text.col=c("red", "blue"), pch=c(1,3))
+dev.off()
+@ 
+\end{nextex}
+% ============================================================================= DATA SUMMARY
+\ttl{summarising data}
+\begin{newttl}
+
+
+  \myitem{statistical parameters}
+    \begin{Verbatim}
+      summary(pea$length)        :    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+                                 :   56.00   58.00   60.50   61.94   65.00   76.00 
+    \end{Verbatim}
+    
+    see also:
+    \begin{Verbatim}
+      mean(), median(), quantile(), min(), max(), var(), fivenum()
+    \end{Verbatim}
+  \myitem{graphs}
+    \begin{description}
+    \item boxplots
+    \item histogram
+    \item density estimation
+    \item quantile-quantile plots
+    \end{description}
+\end{newttl}
+<<>>=
+@ 
+% _________________________________ data characteristics
+\sbttl{data characteristics}
+\begin{newsbttl}
+
+\begin{mylist}
+\item[shape] symmetric, left-skewed or right-skewed, and as uni-modal, bi-modal or multi-modal
+\item[location] (also called measure of central tendency) Measures of location are the mean, median, mode, and mid-range.
+\item[spread] Measured by the variance, the standard deviation, the interquartile range, and the range.
+\item[outliers] 
+% http://exploringdata.cqu.edu.au/ozone.htm
+% The 'ozone hole' above Antarctica provides the setting for one of the most infamous outliers in recent history. It is a great story to tell students who wantonly delete outliers from a dataset merely because they are outliers.
+%
+% In 1985 three researchers (Farman, Gardinar and Shanklin) were puzzled by some data gathered by the British Antarctic Survey showing that ozone levels for Antarctica had dropped 10/% below normal January levels. The puzzle was why the Nimbus 7 satellite, which had instruments aboard for recording ozone levels, hadn't recorded similarly low ozone concentrations. When they examined the data from the satellite it didn't take long to realise that the satellite was in fact recording these low concentrations levels and had been doing so for years. But because the ozone concentrations recorded by the satellite were so low they were being treated as outliers by a computer program and discarded! The Nimbus 7 satellite had in fact been gathering evidence of low ozone levels since 1976. The damage to our atmosphere caused by chloroflourocarbons went undetected and untreated for up to nine years because outliers were discarded without being examined.
+%
+% Moral:
+ Don't just toss out outliers, as they may be the most valuable members of a data set.
+\item[clustering] Clustering means that data bunches up around certain values. It shows up clearly in a dotplot.
+\begin{Verbatim}
+stripchart(pea$length~pea$trt)
+hist(pea$length)
+rug(pea$length)          # the function rug can be very useful to visualize
+                         # clustering togeter with e.g., a histogram
+\end{Verbatim}
+% dotplot(length~trt, data=pea)                                   # using library(lattice)
+
+
+\item[granularity] if only certain discrete values are used. Discrete data shows always some granularity, but also continous data can show granularity, e.g., after rounding.
+Granularity can also be detected in a dotplot.
+\end{mylist}
+\end{newsbttl}
+% _________________________________ boxplot
+\sbttl{boxplot}
+\begin{newsbttl}
+The boxplot was invented by {\scshape Tukey}. He recommends the following:
+\begin{quote}
+Drawing the box:\\
+Find the median. Then find the median of the data values whose ranks are \emph{less than or equal to} the rank of the median. This will be a data value or it will be half way between two data values.\\
+% Bob Hayden prefers this method because the five number summary of five numbers gives the five numbers themselves. For example, take the dataset 1 4 78 81 345. The minimum is 1, the maximum is 345, the median is 78. Splitting the dataset into two halves each containing the median gives Q1 as 4 and Q3 as 81. Very neat. This is the metaphysical property that he has noted.
+Drawing the whiskers:\\
+The maximum length of each whisker is 1.5 times the interquartile range (IQR). To draw the whisker above the 3rd quartile, draw it to the largest data value that is less than or equal to the value that is 1.5 IQRs above the 3rd quartile. Any data value larger than that should be marked as an outlier.
+\end{quote}
+``Why 1.5 times the interquartile range?''\\
+{\scshape Tukey} anwered: ``because 1 is too small and 2 is too large''.
+
+% It has been shown that this is a reasonable rule for determining if a point is an outlier, for a variety of distributions. This question asks the student to demonstrate this for the normal distribution.
+% 1. Assuming that a dataset is approximately normally distributed, show that about 1 data value in 100 would be classified as outliers, using the 1.5*IQR rule.
+% 2. What percentage of data values would be classified as outliers if we adopt a 2.0*IQR rule instead?
+% Worked Solution
+% a. Assume a standard normal distribution. Let the z-value for the1st quartile be z1 and the z-value for the 3rd quartile be z2, ie P(x < z1) = 0.25 and P(x > z2) = 0.25
+% From a normal distribution table, z1 = -0.674 and z2 = 0.674. Hence the IQR is z2 - z1 = 1.348.
+% The z-score which is 1.5*IQR below the first quartile is z3 = -0.674 - 1.5*1.348 = -2.596, while the z-score which is 1.5*IQR above the third quartile is z4 = 2.596
+% From the standard normal table, P(x < z3) = 0.5 - 0.4953 = 0.0047, while P(x > z4) = 0.0047
+% Hence the probability that a value is an outlier is 2 * 0.0047 = 0.0094 which is approximately 0.01. Therefore about 1 data value in 100 would be an outlier if the distribution was Gaussian.
+% b. The first part of the analysis is the same, ie z1 = -0.674 and z2 = 0.674. Hence the IQR is z2 - z1 = 1.348.
+% z3 = -0.674 - 2.0*1.348 = -3.37, while z4 = 3.37.
+% From the standard normal table, P(x < z3) = 0.5 - 0.4996 = 0.0004, while P(x > z4) = 0.0004
+% Hence the probability that a value is an outlier is 2 * 0.0004 = 0.0008; hence less than 1 data value in 1000 would be classified as an outlier using the 2.0*IQR rule.
+\end{newsbttl}
+% ___________ pea 
+\begin{nextsbttl}
+\begin{plot}{\mbox{}}
+\fbox{\includegraphics[width=0.4\textwidth]{plots/boxplots_pea.pdf}}
+\end{plot}
+\myitem{with \R}
+\begin{Verbatim}
+boxplot(your.sample)
+
+bwplot(~length|trt, layout=c(1,5), data=pea)      # using: library(lattice)
+\end{Verbatim}
+\end{nextsbttl}
+% _________________________________ histogram
+\sbttl{histogram}
+% ___________
+\begin{newsbttl}
+\begin{plot}{\mbox{}}
+\fbox{\includegraphics[width=0.4\textwidth]{plots/histogram_pea.pdf}}
+\end{plot}
+\myitem{with \R}\vspace{-5mm}
+\begin{Verbatim}
+hist(your.sample, freq=FALSE)
+truehist(your.sample)                                           # from package MASS
+                
+histogram(~length|trt, type="density", layout=c(1,5), data=pea) # library(lattice)
+                                                                # used for the graph
+\end{Verbatim}
+\end{newsbttl}
+% ___________ bin number
+\begin{nextsbttl}
+\begin{plot}{histograms depend on the bin number}
+\fbox{\includegraphics[width=0.5\textwidth]{plots/hist_binnumber.pdf}}
+\end{plot}
+\end{nextsbttl}
+% ___________ starting point
+\begin{nextsbttl}
+\begin{plot}{histograms depend on the starting point}
+\fbox{\includegraphics[width=0.5\textwidth]{plots/hist_startpoint.pdf}}
+\end{plot}
+\end{nextsbttl}
+% _________________________________ DENSITY PLOT
+\sbttl{density}
+% ___________ rectangular
+\begin{newsbttl}
+  \begin{plot}{}
+\vspace{2cm}
+    \fbox{\includegraphics[width=0.8\textwidth]{plots/density_rectangular.pdf}}
+  \end{plot}
+\end{newsbttl}
+% ___________ gaussian
+\begin{nextsbttl}
+  \begin{plot}{}
+\vspace{2cm}
+    \fbox{\includegraphics[width=0.8\textwidth]{plots/density_gaussian.pdf}}
+  \end{plot}
+\end{nextsbttl}
+% ___________ pea data
+\begin{nextsbttl}
+\begin{plot}{density plots are indepentent of the starting point}
+\fbox{\includegraphics[width=0.4\textwidth]{plots/density_pea.pdf}}
+\end{plot}
+\myitem{with \R}\vspace{-5mm}
+\begin{Verbatim}
+hist(your.sample, freq=FALSE)                     # adjust ylim if needed
+lines(density(your.sample))
+
+densityplot(~length|trt, layout=c(1,5), data=pea) # library(lattice)
+                                                  # was used for the graph you see
+\end{Verbatim}
+\end{nextsbttl}
+% _________________________________ quantile quantile plot
+\sbttl{quantile-quantile plot}
+\begin{newsbttl}
+\begin{plot}{normal quantile-quantile plot}
+\fbox{\includegraphics[width=0.5\textwidth]{plots/qqplot_example.pdf}}
+\end{plot}
+\myitem{with \R}
+\begin{Verbatim}
+qqnorm(your.sample)
+qqline(your.sample)
+\end{Verbatim}
+\end{newsbttl}
+% ___________ qqplot pea
+% \begin{nextsbttl}
+% \begin{plot}{normal quantile-quantile plot}
+% \fbox{\includegraphics[width=0.5\textwidth]{plots/qqplot_pea.pdf}}
+% \end{plot}
+% \end{nextsbttl}
+% ___________ qqplot distributions
+\begin{nextsbttl}
+\begin{plot}{normal quantile quantile plots for different distributions}
+\includegraphics[width=0.25\textwidth]{plots/normal}
+\includegraphics[width=0.25\textwidth]{plots/bimodal}
+\includegraphics[width=0.25\textwidth]{plots/leptokurtic}\\
+\includegraphics[width=0.25\textwidth]{plots/platykurtic}
+\includegraphics[width=0.25\textwidth]{plots/right}
+\includegraphics[width=0.25\textwidth]{plots/left}
+\end{plot}
+\end{nextsbttl}
+% ============================================================================= DENSITIES
+\ttl{densities and distributions}
+% see the black board notes
+<<eval=FALSE, echo=FALSE>>=
+probability <- seq(from=0.0001, to=0.9999, length.out=1000)
+quantile <- qchisq(probability, df=3)
+density <- dchisq(quantile, df=3)
+# ploting the density
+plot(density ~ quantile, type="n")
+lines(density ~ quantile)
+abline(v=3, lty=2)
+# the probability that a value is smaler (larger) than 7
+pchisq(7, df=3)
+pchisq(7, df=3, lower.tail=FALSE)
+
+
+# the density at quantile=7
+dchisq(7, df=3)
+@
+\begin{newttl}
+\R has build--in functions starting with
+\begin{Rlist}
+\item[d] for \emph{density} with the argument \Rcode{x} (quantile)
+\item[p] for \emph{probability} with the argument \Rcode{q} (quantile)
+\item[q] for \emph{quantile} with the argument \Rcode{p} (probability)
+\item[r] for \emph{random} with the argument \Rcode{n} (number of observations)
+\end{Rlist}
+and ending with the name of a distribution\\
+\begin{minipage}[t]{0.45\textwidth}
+\begin{Rlist}
+\item[beta] Beta
+\item[binom] Binominal
+\item[cauchy] Cauchy
+\item[chisq] $\chi^2$
+\item[exp] Exponential
+\item[f] Fisher's F
+\item[gamma] Gamma
+\item[geom] Geometric
+\item[hyper] Hypergeometric
+\end{Rlist}
+\end{minipage}%
+\begin{minipage}[t]{0.45\textwidth}
+\begin{Rlist}
+\item[lnorm] Lognormal
+\item[logis] Logistic
+\item[nbinom] Negative binomial
+\item[norm] Normal, Gaussian
+\item[pois] Poisson
+\item[t] Student's t
+\item[unif] Uniform
+\item[weibull] Weibull
+\end{Rlist}
+\end{minipage}
+\end{newttl}
+% _________________________________ PRACTICALS IV
+\begin{ttlex}
+  \begin{exlist}
+% EX 1
+  \item Generate a sample of size 100 from a $t-$distribution with 4 degrees of freedom. 
+\begin{exsblist}
+\item Produce a normal QQ-plot of this sample and assess how straight the produced plot is by adding a straight line. Interprete!
+\item Produce a histogram of the sample.
+\end{exsblist}
+\item Generate a sample of size 100 from a normal distribution ($\mu=0, \sigma=1$).
+\begin{exsblist}
+\item Produce a normal QQ-plot of this sample.
+\item Produce a histogram of the sample.
+\end{exsblist}
+%To compare a sample from the normal distribution to a sample from the $t$-distribution, plot both QQ-plots and both histograms side by side (pdf-file, 20cm x 20cm). What can you say about this two distributions?
+\item Produce a plot with all four plots side by side (pdf-file, 20cm x 20cm).
+\begin{exsblist}
+\item Adjust in all four plots the range displayed on the x- and y-axis.
+\item Compare the sample from the normal distribution with the sample from the $t-$distribution.
+\end{exsblist}
+
+<<grphical::ex1, eval=FALSE, echo=FALSE>>=
+# ex1
+t.sample <- rt(100, df=3)
+# a)
+qqnorm(t.sample)
+qqline(t.sample)
+# b)
+hist(t.sample, freq=FALSE)
+lines(density(t.sample)) # if you like
+# ex2
+norm.sample <- rnorm(100)
+# a)
+qqnorm(norm.sample)
+qqline(norm.sample)
+#
+hist(norm.sample)
+# ex3
+pdf("~/Desktop/comparet_norm.pdf", width=20/2.540, height=20/2.540)
+par(mfrow=c(2,2))
+# first panel
+qqnorm(t.sample)
+qqline(t.sample)
+# second panel
+qqnorm(norm.sample)
+qqline(norm.sample)
+# third panel
+hist(t.sample)
+# fourth panel
+hist(norm.sample)
+dev.off()
+# a)
+# with e.g., ylim=c(-3,3)
+@ 
+\item Load the package \Rpack{asuR}. Generate a sample of random numbers, e.g., \Verb|x <- rchisq(20, df=2)|. Use the function \Verb|norm.test(x)| and try to identify your data sample among 8 samples from a normal distribution of the same size.
+\begin{exsblist}
+\item How large must the sample be, that you can clearly identify it?
+\item Load the data set swiss again. Can you distinguish the variable ``Fertilty'' from a sample taken from a normal distribution? Interpret!
+\item Can you distinguish the variable ``Catholic'' from a sample taken from a normal distribution? Interpret!
+\end{exsblist}
+\end{exlist}
+\end{ttlex}
+% ============================================================================= CLASSICAL STATISTICS
+\ttl{classical statistics}
+\begin{newttl}
+\begin{Rlist}
+\item[t.test()] student's $t$-test for comparing two sample means; (paired=logical)
+\item[pairwise.t.test()] for pairwise comparisons among means with correction for multiple testing
+\item[prop.test()]  test for given or equal proportions
+\item[pairwise.prop.test()] pairwise comparisons for pairwise proportions with correction for multiple testing
+\item[chisq.test()] Pearson's Chi-squared test for count data
+\item[fisher.test()] Fisher's exact test for count data
+\item[binom.test()] an exact binomial test
+\item[mantelhaen.test()] Cochran-Mantel-Haenszel test for three-dimensional contingency tables
+\item[mcnemar.test()] McNemar's Chi-squared test on two-dimensional contingency tables
+\item[var.test()] an $F-$test to compare two variances
+\item[cor.test()] for testing an association between paired samples
+\item[bartlett.test()] for testing the homogeneity of variances
+\item[fligner.test()] for testing the homogeneity of variances
+\end{Rlist}
+\end{newttl}
+% ___________
+\begin{nextttl}
+Non-parametric tests:
+\begin{Rlist}
+\item[friedman.test()] an alternative to analysis of variance based on ranks
+\item[kruskal.test()] one-way analysis of variance with ranks
+\item[ks.test()] Kolmogorov-Smirnov test; a non-parametric test for comparing both! the location and scale of two samples
+\item[shapiro.test()] Shapiro-Wilk normality test
+\item[wilcox.test()] Wilcoxon signed rank test; an alternative for the paired $t-$test\\the same function is also used to perform a ``Mann-Whitney''-test; to test if the median of two samples differ
+\end{Rlist}
+\end{nextttl}
+% _________________________________ T TEST
+\sbttl{t-test}
+\begin{newsbttl}
+The $t-$test can be used to test if two samples were taken from a population with the same mean. To use the $t-$test this two populations need to be normally distributed and have an equal variance.
+\begin{Verbatim}
+data(pea)
+glucose <- pea[pea$trt=="gluc","length"]
+fructose <- pea[pea$trt=="fruc","length"]
+t.test(glucose, fructose)                                   
+
+my.t(mean1=mean(glucose), mean2=mean(fructose),             # the function my.t was defined p.12
++    s1=sqrt(var(glucose)), s2=sqrt(var(fructose)),
++    n1=10, n2=10)
+pt(1.4, df=18)                                              # the probability for a larger value
+1-pt(1.4, df=18)                                            # the one-sided $p-$value
+(1-pt(1.4, df=18))*2                                        # the two-sided $p-$value
+\end{Verbatim}
+\end{newsbttl}
+% ============================================================================= LINEAR MODELS
+\ttl{linear models in R}
+\begin{newttl}
+\begin{myRcode}{}
+fitted-model  \assign  model-fitting-function (formula , data-frame)
+\end{myRcode}
+A list of model fitting functions,
+\begin{Rlist}
+\item[aov()] for analysis of variance
+\item[lm()] for regressions and analysis of covariance
+\item[glm()] for generalized linear models
+\item[lmer()] for linear mixed effect models (library \Rpack{lme4})
+\item[lme()] for linear mixed effect models (library \Rpack{nlme}, ``older'', but much better documented, see book by \citep{Pinh00})
+\end{Rlist}
+\end{newttl}
+%___________ 
+\begin{nextttl}
+A fitted model object contains the information from the analysis.
+Several functions are available to extract this information, to inspect the distributional assumptions of the fitting process, and to look for models that better fit to the data.
+\begin{Rlist}
+\item[plot()] for diagnostic plots
+\item[summary()] for a summary of the analysis
+\item[summary.lm()] for a
+\item[anova()] computes an analysis of variance table (see below)
+\item[coef()] for the coefficients
+\item[resid()] for the residuals
+\item[fitted()] for the fitted values
+\item[predict()] to predict new means for new data
+\item[deviance()] for the residual sum of squares
+\item[df.residual()] for the residual degrees of freedom
+\item[step()] stepwise (``backward'' or ``forward'') model selection
+\end{Rlist}
+To function \Verb|anova()| can additionally be used to compare fitted model objects.
+\end{nextttl}
+% ============================================================================= FORMULA
+\ttl{model formula}
+\begin{newttl}
+A model formula is of the form
+\begin{myRcode}{}
+  y \til model.
+\end{myRcode}
+It describes how the response \Rcode{y} is modelled by a linear predictor specified by the \Rcode{model}.\\
+Operators used to specify a model
+\begin{compactdesc}
+\item[\Verb|+|] include additive terms
+\item[\Verb|-|] remove a term
+\item[\Verb|*|]  crossing of factors
+\SaveVerb{cross}=^a=
+\item[\protect\UseVerb{cross}] crossing to the a$^{\mathrm{th}}$ degree
+\item[\Verb|:|] interaction
+\SaveVerb{nest}=%in%=
+\item[\protect\UseVerb{nest} \textnormal{and} \Verb|/|] ``nested in''
+\SaveVerb{pipe}=|=
+\item[\protect\UseVerb{pipe}] indicates grouping 
+\item[\Verb|I()|] operators inside are used in an arithmetic sense
+\end{compactdesc}
+
+By default a formulae produces a model matrix with an intercept. If you want to remove it use \Verb|-1|.
+
+\end{newttl}
+% _________________________________
+\begin{nextttl}
+Arithmetic expressions can be used directly within a formula, e.g, \Verb|log(y) ~ x|.
+If you use operators that are already used symbolically in the model formulae (see above) you must tell \R explicitly that you want to use them in the arithmetic sense (with function \Verb|I()|, meaning: ``inhibit the interpretation'').
+\begin{Verbatim}
+y ~ I(a-1)                              # subtracts 1 from a
+y ~ a - 1                               # removes the intercept
+y ~ a + I(b+c)                          # two terms: a and (b+c)
+y ~ a + b + c                           # three terms: a, b, and c
+\end{Verbatim}
+
+Model formulae are often long and cumbersome to handle. The operators \Verb|*| and \Verb|^| are in this situations useful.
+\begin{Verbatim}
+(a+b+c)^2     and     a*b*c - a:b:c     # are interpreted as: a + b +c + a:b + a:c + b:c
+\end{Verbatim}
+
+\end{nextttl}
+% ============================================================================= ANOVA
+\ttl{analysis of variance}
+\begin{newttl}
+\begin{Verbatim}
+model <- aov(length ~ trt, data=pea)
+\end{Verbatim}
+% A fitted model object contains the information from the analysis.
+% It can be extractet with functions like
+% \begin{Rlist}
+% \item[plot()] for diagnostic plots
+% \item[summary()] for a summary of the analysis
+% \item[coef()] for the coefficients
+% \item[resid()] for the residuals
+% \item[fitted()] for the fitted valus
+% \item[predict()] to predict new means for new data
+% \item[deviance()] for the residual sum of squares
+% \end{Rlist}
+BEFORE you interpret a model, inspect it!\\
+\begin{Verbatim}
+plot(model)
+\end{Verbatim}
+You can also inspect your model with your own graphs!\\
+\begin{Verbatim}
+res <- resid(model)
+qqnorm(res)...etc!
+norm(model)                             # from library(asuR)
+inspect(model)                          # from library(asuR)
+\end{Verbatim}
+\end{newttl}
+% ============================================================================= CONTRASTS
+\ttl{contrasts \& comparisons}
+\begin{newttl}
+For factors with more than two levels, comparisons among different levels are usually of interest (also comparisons among means of different levels).
+
+\begin{compactdesc}
+\item[planned vs. unplanned (\emph{a-priori} vs. \emph{a-posteriory})] Planned comparisons are chosen \emph{independently} of the results of the experiment and \emph{before} the experiment has been carried out.
+Unplanned comparisons suggest themselves \emph{as a result} of an experiment and they include all possible pairs ($\#levels(\#levels-1)/2$) of comparisons.
+Therefore they are also called \emph{multiple} comparisons.
+To test whether comparisons are significant we need to distinguish these two cases!
+\item[orthogonality] The number of orthogonal comparisons is restricted to \#levels$ - 1$\\
+(two contrasts are orthogonal if the product of their coefficients sum to zero)
+\end{compactdesc} 
+
+<<pea.data, eval=FALSE, echo=TRUE, fig=FALSE>>=
+data(pea)
+boxplot(x=split(x=pea$length, f=pea$trt), xlab="levels of the factor \"trt\"", ylab="length of pea sections")
+m0 <- lm(length ~ trt, data=pea)
+coefficients(m0)
+options("contrasts")
+@
+\end{newttl}
+%_________________________________
+\sbttl{setting contrasts manually}
+\begin{newsbttl}
+To set the contrasts manually you specify a vector with \emph{coefficients for a linear comparisons}.
+To compare the addition of sugar we can compare the control to the mean of the four sugar treatments.
+Therefore we subtract the mean pea length of the four sugar treatments from the length of the control.
+<<control-sugar, eval=FALSE, echo=TRUE>>=
+contr1 <- rbind("control-sugar"=c(1, -1/4, -1/4, -1/4, -1/4))
+m1 <- lm(length ~ trt, data=pea, contrasts=list(trt=mycontr(contr=contr1)))
+summary(m1)
+@ 
+To test whether a mixture of sugars is different from pure sugars we calculate a second contrast.
+<<pure-mixed, eval=FALSE, echo=TRUE>>=
+contr2 <- rbind("control-sugar"=c(1, -1/4, -1/4, -1/4, -1/4), "pure-mixed"=c(  0, 1/3, 1/3, -1, 1/3))
+m2 <- lm(length ~ trt, data=pea, contrasts=list(trt=mancontr(contr=contr2)))
+@
+We can control whether it is orthogonal to the first by checking whether the product of the coefficients add up to zero.
+$(1 \times 0) + (-1/4 \times 1/3) + (-1/4 \times 1/3) + (-1/4 \times -1) + (-1/4 \times 1/3) = 0$
+\end{newsbttl}
+%_________________________________
+\sbttl{setting contrasts manually}
+\begin{nextsbttl}
+
+In this particular example the investigator was interested in two other contrast.
+One is the difference between monosaccharides and disaccharides and the other the difference between glucose and fructose.
+<<other contrasts, eval=FALSE, echo=TRUE>>=
+contr3 <- rbind("control-sugar"=c(1, -1/4, -1/4, -1/4, -1/4), "pure-mixed"=c(  0, 1/3, 1/3, 1, 1/3), "monosaccharides-disaccharides"=c(0,1/2,1/2,0,-1))
+m3 <- lm(length ~ trt, data=pea, contrasts=list(trt=mancontr(contr=contr3)))
+contr4 <- rbind("control-sugar"=c(1, -1/4, -1/4, -1/4, -1/4), "mixed-pure"=c(  0, 1/3, 1/3, 1, 1/3), "monosaccharides-disaccharides"=c(0,1/2,1/2,0,-1), "gluc-fruc"=c(0,1,-1,0,0))
+m4 <- lm(length ~ trt, data=pea, contrasts=list(trt=mancontr(contr=contr4)))
+@
+
+\end{nextsbttl}
+%_________________________________
+\sbttl{contrast options in R}
+\begin{newsbttl}
+
+By default \R uses \textbf{treatment contrasts}.
+You can set the treatment contrasts explicitly with
+<<treatment.contrast, eval=FALSE, echo=TRUE>>=
+options(contrasts=c("contr.treatment", "contr.poly"))
+@
+For the example with pea data you could set the treatment contrasts manually
+<<treatment.contrasts.manually, eval=FALSE, echo=TRUE>>=
+treatment.contrast <- rbind(c(0,1,0,0,0), c(0,0,1,0,0), c(0,0,0,1,0), c(0,0,0,0,1))
+treatment.contrast.names <- list("control - gluc", "control - fruc", "control - glucfruc", "control - sucr")
+m.treatment <- lm(length ~ trt, data=pea, contrasts=list(trt=mancontr(treatment.contrast, contr.names=treatment.contrast.names)))
+@
+This shows that the treatment contrasts are not true contrasts.
+Every coefficient represents a comparison of one level with level 1; ommiting level 1 itself, which is given as intercept.
+For the data set ``pea'', the first coefficient (Intercept) is the mean of the \Verb|cont| treatment, the second the difference between \Verb|cont| and \Verb|gluc|, the third the difference between \Verb|cont| and \Verb|fruc|, etc.
+
+The same coefficients with an intercept equal to the mean of all treatments can be obtained with:
+<<eval=FALSE,echo=TRUE>>=
+new.trt.cont <- rbind("contr-gluc"=c(1,-1,0,0,0), "contr-fruc"=c(1,0,-1,0,0), "contr-glucfruc"=c(1,0,0,-1,0), "contr-sucr"=c(1,0,0,0,-1))
+@
+
+
+\end{newsbttl}
+% _________________________________
+\begin{nextsbttl}
+Three other useful contrast options and their meaning:\\
+\textbf{sum contrasts}
+<<sum.contrasts, eval=FALSE, echo=TRUE>>=
+options(contrasts=c("contr.sum", "contr.poly"))
+@ 
+setting the sum contrasts manually:
+<<eval=FALSE, echo=TRUE>>=
+sum.contrast <- list(c(4/5, -1/5, -1/5, -1/5, -1/5), c(-1/5, 4/5, -1/5, -1/5, -1/5), c(-1/5, -1/5, 4/5, -1/5, -1/5), c(-1/5, -1/5, -1/5, 4/5, -1/5))
+sum.contrast.names <- list("control - mean of all", "gluc - mean of all", "fruc - mean of all", "glucfruc - mean of all")
+m.sum <- lm(length ~ trt, data=pea, contrasts=list(trt=mancontr(contr=sum.contrast, contr.names=sum.contrast.names)))
+@ 
+\textbf{helmert contrasts}
+<<helmert.contrasts, eval=FALSE, echo=TRUE>>=
+options(contrasts=c("contr.helmert", "contr.poly"))
+@ 
+setting the helmert contrasts manually:
+<<eval=FALSE, echo=TRUE>>=
+helmert.contrast <- list(c(-1/2, 1/2, 0, 0, 0), c(-1/6,-1/6,1/3,0,0), c(-1/12, -1/12, -1/12, 1/4, 0), c(-1/20, -1/20, -1/20, -1/20, 1/5))
+helmert.contrast.names <- list("gluc-contr", "fruc-mean(contr,gluc)", "glucfruc-mean(contr,gluc,fruc)", "sucr-mean(contr,gluc,fruc,glucfruc)")
+m.helmert <- lm(length ~ trt, data=pea, contrasts=list(trt=mancontr(contr=helmert.contrast, contr.names=helmert.contrast.names)))
+@
+\end{nextsbttl}
+% _________________________________
+\begin{nextsbttl}
+\textbf{successive differences} (from package \Rpack{MASS})
+<<sdif.contrasts, eval=FALSE, echo=TRUE>>=
+options(contrasts=c("contr.sdif", "contr.poly")) # from library MASS
+@ 
+setting the successive differences contrasts manually:
+<<eval=FALSE, echo=TRUE>>=
+sdif.contrast <- list(c(-1,1,0,0,0), c(0,-1,1,0,0), c(0,0,-1,1,0), c(0,0,0,-1,1))
+sdif.contrast.names <- list("gluc-control", "fruc-gluc", "glucfruc-fruc", "sucr-glucfruc")
+m.sdif <- lm(length ~ trt, data=pea, contrasts=list(trt=mancontr(contr=sdif.contrast, contr.names=sdif.contrast.names)))
+@
+\end{nextsbttl}
+%_________________________________
+\sbttl{multiple comparisons}
+\begin{newsbttl}
+Theory of $p$--values of hypothesis tests and of coverage of confidence intervals applies to \emph{a-priory} comparisons only!
+
+The following example illustrates the problem:
+<<multiple comparison motivation, eval=FALSE, echo=TRUE>>=
+y <- rnorm(1000, sd=1)
+x <- rep(1:100, each=10)
+dat <- data.frame(y=y, x=as.factor(x))
+m <- aov(y ~ x, data=dat)
+summary(m)
+@ 
+    
+\end{newsbttl}
+%_________________________________
+\sbsbttl{Tukey's HSD}
+\begin{newsbsbttl}
+Student ({\scshape WS Gosset}) discovered the distribution of the t statistic when there are \emph{two} groups to be compared and there is no underlying mean difference between them.
+When there are $x$ groups, there are $x(x-1)/2$ pairwise comparisons that can be made.
+Tukey found the distribution of the \emph{largest} of these t statistics when there are no underlying differences.
+Because the number of groups is accounted for, there is only a 5\% chance that Tukey's HSD (Honest Significant Difference) will declare something to be statistically significant when all groups have the same population mean.
+
+Although stated differently in several textbooks, Tukey's HSD is no \emph{per se} conservative! If you test only a subset of the possible pairwise comparisons, it is of course conservative, because it assumes that you compare all.
+
+The calculation of Tukey's HSD in \R is straightforward:
+<<tukey, eval=FALSE, echo=TRUE>>=
+m0 <- aov(length ~ trt, data=pea)
+t0 <- TukeyHSD(m0)
+plot(t0)
+@
+
+\end{newsbsbttl}
+%_________________________________
+\sbsbttl{a paradox?}
+\begin{newsbsbttl}
+A researcher compares the treatments $a$, $b$, and $c$. With a multiple comparison procedure no result achieves statistical significance.
+On the same planet there are three researcher one makes an experiment to test treatment $a$ vs. $b$ and another $b$ vs. $c$. They both find no statistical significance. But the third researcher investigates the difference of $a$ vs. $c$ finds a significant result. He does not have to make adjustments and can impress others with his findings.
+
+<<paradox, eval=FALSE, echo=FALSE>>=
+y <- c(rnorm(10, mean=1.9, sd=0.1), rnorm(10, mean=1.95, sd=0.1), rnorm(10, mean=2, sd=0.1))
+x <- factor(rep(c("a","b","c"), each=10))
+dat <- data.frame(y=y, x=x)
+contr1 <- rbind("a-b"=c(1,-1,0), "b-c"=c(0,1,-1))
+contr2 <- rbind("a-c"=c(1,0,-1,))
+m1 <- aov(y~x, data=dat, contrasts=list(x=mancontr(contr1))); summary.lm(m1)
+m2 <- aov(y~x, data=dat, contrasts=list(x=mancontr(contr2))); summary.lm(m2)
+
+tapply(dat$y, dat$x, mean)
+t <- TukeyHSD(m2);t
+@
+\end{newsbsbttl}
+
+%_________________________________
+\sbsbttl{conclusion}
+\begin{newsbsbttl}
+\begin{Citation}{\citep{Cook96}}
+The issues (of multiple comparisons) are non--technical and indeed there may be some concern that they may be overlooked if attention is focused only on technical aspects of multiple-testing procedures.
+\end{Citation}   
+Further reading:\\
+
+\bibentry{Soka95}
+\end{newsbsbttl}
+%_________________________________ PRACTICALS V
+\begin{ttlex}
+\begin{exlist}
+\item Load the data frame ``immer'' from the package \Rpack{MASS}. It has the variables ``Var'' for variety, ``Loc'' for locality and ``Y1'' and ``Y2'' for the yield in two successive years.
+\begin{exsblist}
+\item Summaries the data set graphically with at least 4 different plots.
+\item Is there a significant difference in average yield (across Y1 and Y2)  between varieties?
+\item Inspect the model you have fitted. What steps do you need to do? What are you looking at?
+\item You have an \emph{a priory} strong interest to know whether there is a significant difference in average yield between the locality ``C'' and ``D''. Is there a significant difference?
+\item How many other comparisons can you make without adjusting for multiple comparisons.
+\item Select one full set of contrasts manually.
+\item You are \emph{a priory} interested to know wheter one of the varieties M, P, T, or V has a higher average yield (across years) than the mean of all varieties?
+\item You have no \emph{a priory} expectation for the different varieties of barley. Compute and plot the simultaneous confidence intervals for all pairwise differences in the average yield. Are there varieties that differ significantly?
+\end{exsblist}
+<<pr5_ex1, eval=TRUE, echo=FALSE>>=
+library(MASS); library(asuR)
+data(immer)
+@ 
+\end{exlist}
+<<pr5_ex1, eval=FALSE, echo=FALSE>>=
+data(immer)
+m <- aov((Y1+Y2)/2 ~ Loc + Var, data=immer)
+summary(m)
+co <- rbind("C-D"=c(1,-1,0,0,0,0))
+m1 <- aov((Y1+Y2)/2 ~ Loc + Var, contrasts=list(Loc=mancontr(co)),data=immer)
+tk <- TukeyHSD(m, which="Var")
+plot(tk)
+ densityplot(~(Y1+Y2)/2|Var, data=immer)
+ tapply((immer$Y1+immer$Y2)/2, immer$Var, mean)
+@ 
+\end{ttlex}
+
+% ============================================================================= REGRESSION
+% \ttl{terms}
+% \begin{newttl}
+%   \begin{mylist}
+%   \item[factor]
+%   \item[level]
+%     \begin{mylist}
+%     \item[nested]
+%     \item[crossed]
+%     \end{mylist}
+%   \item[effect]
+%     \begin{mylist}
+%     \item[fixed] a finite number of levels; we are interested in them 
+%     \item[random] the number of levels (usually) infinite; we are interested in their variability
+%     \item[interaction]
+%     \item[main]
+%     \end{mylist}
+%   \item[data]
+%     \begin{mylist}
+%     \item[balanced] 
+%     \item[unbalanced]
+%     \end{mylist}
+%   \end{mylist}
+% %
+% \end{newttl}
+% _____________________________________________________________________________ LINEAR MODELS I
+\ttl{linear models I}
+\begin{newttl}
+
+one--way ANOVA:\\
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+\mathrm{E}[y_{ij}] &=&\mu + \alpha_i\\
+y_{ij} &\sim& indep. \quad  \mathcal{N}(\mu+\alpha_i, \sigma^2)
+\end{tabular}
+
+two--way ANOVA:\\
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+\mathrm{E}[y_{ijk}] &=&\mu + \alpha_i + \beta_{j}\\
+y_{ijk} &\sim& indep. \quad  \mathcal{N}(\mu+\alpha_i+\beta_{j}, \sigma^2)
+\end{tabular}
+
+simple linear regression:\\
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+\mathrm{E}[y_i] &=&  \mu(x_i) =  \alpha + \beta x_i\\
+y_i &\sim& indep. \quad \mathcal{N}( \alpha + \beta x_i, \sigma^2)
+\end{tabular}
+
+multiple linear regression:\\
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+\mathrm{E}[y_{ij}] &=& \beta_0 + \beta_1 x_{1_i} + \beta_2 x_{2_j}\\
+y_{ij} &\sim& indep. \quad \mathcal{N}(\beta_0 + \beta_1 x_{1_i} + \beta_2 x_{2_j}, \sigma^2)
+\end{tabular}
+
+
+\end{newttl}
+% _____________________________________________________________________________ REGRESSION
+\ttl{regression}
+\begin{newttl}
+
+\end{newttl}
+% _________________________________ SESSION
+\sbttl{a regression session}
+\begin{newsbttl}
+\begin{Verbatim}
+par(pch=16)
+data(swiss)
+plot(Fertility ~ Education, data=swiss, col="blue")
+m0 <- lm(Fertility ~ Education, data=swiss)
+abline(m0)
+\end{Verbatim}
+\includegraphics[width=0.6\textwidth]{plots/regression}
+\begin{Verbatim}
+identify(swiss$Fertility ~ swiss$Education, )
+\end{Verbatim}
+\end{newsbttl}
+% ___________ continued
+\begin{nextsbttl}
+\begin{Verbatim}
+plot(m0)
+inspect(m0)                             # library(asuR)
+norm(m0)                                # library(asuR)
+
+# to see the influence of row 45
+m0.s1 <- lm(Fertility ~ Education, data=swiss[row.names(swiss)!="V. de Geneve",])
+
+summary(m0)
+          :Call:
+          :lm(formula = Fertility ~ Education, data = swiss)
+          :
+          :Residuals:
+          :    Min      1Q  Median      3Q     Max 
+          :-17.036  -6.711  -1.011   9.526  19.689 
+          :
+          :Coefficients:
+          :            Estimate Std. Error t value Pr(>|t|)    
+          :(Intercept)  79.6101     2.1041  37.836  < 2e-16 ***
+          :Education    -0.8624     0.1448  -5.954 3.66e-07 ***
+          :---
+          :Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+          :
+          :Residual standard error: 9.446 on 45 degrees of freedom
+          :Multiple R-Squared: 0.4406,	Adjusted R-squared: 0.4282 
+          :F-statistic: 35.45 on 1 and 45 DF,  p-value: 3.659e-07 
+\end{Verbatim}
+\end{nextsbttl}
+% ___________ continued
+\begin{nextsbttl}
+\myplot{\mbox{}}{distribution of $y_i \mid x$ around the regression line}{plots/example2.pdf}
+\end{nextsbttl}
+% # other predictors
+% m1 <- lm(Fertility ~ Education + Catholic, data=swiss)
+% _________________________________ ASSUMPTIONS
+\sbttl{assumptions}
+\begin{newsbttl}
+\begin{small}
+\ctable[caption = % \protect{,}		$\mbox{=}$        \newline
+%---begin CAPTION
+%---end
+,%
+label    	=tab:assumptions,		 % <- fill
+width		=\textwidth,  % <- fill
+pos			=H,  % <- fill
+]{p{5mm}X}{                
+%---begin TNOTE
+	\tnote{Only needed if assumption 3.a) is violated.}
+%---end
+}{%
+\FL
+%---begin HEAD
+					&Description				
+%---end
+\ML
+%---begin CORE
+\multicolumn{2}{l}{1. Linearity}   	\NN
+                                        &Follows directly from the definition of the model			\NN
+					&$Y=X\beta + \epsilon$					          	\NN
+\multicolumn{2}{l}{2. Computational}   										\NN
+&The predictor variables are linearly independent. This is needed to find a unique estimate of $\beta$.	        \NN
+					&rank($X$)=$k$								\NN
+\multicolumn{2}{l}{3. Distributional}                                                                   	\NN
+a)					&$X$ is non--random							\NN
+b)					&$X$ is measured without error						\NN
+					&The errors $\epsilon_1, \epsilon_2, \ldots, \epsilon_n$ 	        \NN
+c)					&$\quad- $are normally distributed			         	\NN
+d)					&$\quad- $are independent of each other					\NN
+e)					&$\quad- $have zero mean						\NN
+f)					&$\quad- $have a constant (but unknown) variance ($\sigma^2$)		\NN				
+\multicolumn{2}{l}{4. Implicit}   	                                                                        \NN
+a)~\tmark		           	&The observations are equally reliable					\NN
+b)					&The observations have an equal influence				\NN
+%---end
+\LL
+}
+\end{small}
+\end{newsbttl}
+% _________________________________ INSPECTION
+\sbttl{inspection}
+\begin{newsbttl}
+\begin{small}
+\ctable[caption = % \protect{,}		$\mbox{=}$        \newline
+%---begin CAPTION
+%---end
+,%
+label    	=tab:validation,		 % <- fill
+width		=1.3\textheight,  % <- fill
+pos     	=H,  % <- fill
+]{Xll>{\ttfamily}ll}{                
+%---begin TNOTE
+	\tnote{Numbered according to previous table}
+%---end
+}{%
+\FL
+%---begin HEAD
+Name					&Assumption\tmark	&Expected Pattern					&Function	&Suggestion
+%---end
+\ML
+%---begin CORE
+Stud. residuals vs. each predictor	&1, 3e,f)		&random scatter about zero			&rxp()		&transformation			\NN
+					&			&						&		&missing/obsolete variable	\NN
+Stud. residuals vs. predicted values	&1, 3e,f)		&random scatter about zero			&ryp()		&transformation			\NN
+					&			&									&		&       \NN
+%Added Variable Plot			&4b)			&straight through origin			&avp()		&remove variable		\NN
+%					&			&(slope: t-value)				&		&                               \NN
+Normal prob. plot of stud. residuals	&3c)			&straight through origin			&nrp()		&                               \NN
+					&			&(slope: 1)							&			&       \NN
+Index plot of stud. residuals		&3d,e)			&random scatter about zero			&irp()		&                               \NN
+					&					&						&			&       \NN
+Index plot of the leverage		&4b)			&random scatter and small				&ilp()		&transformation		\NN
+					&				&									&	&       \NN
+Index plot of Hadi's influence measure	&4b)			&random scatter and small				&ihp()		&transformation		\NN
+					&				&									&	&       \NN
+Potential-Residual plot			&4b)			&random scatter&prp()					&look for better model 			\NN
+					&			&(in lower,left corner)				&	&or better data
+%%---end
+\LL
+}
+\end{small}
+\end{newsbttl}
+% _________________________________ MODEL SELECTION
+\sbttl{model selection}
+\begin{newsbttl}
+So far we assumed that the variables that go into the model equation are chosen in advance.
+In many situations, however, the set of variables to be included in the model equation is not \emph{a priori} determined.
+Then the selection of predictor variables is an important step.
+
+There are several predictor variable procedures.
+Procedures where one variable at a time is added or dropped are the \emph{backward elimination}, the \emph{forward selection}, or the \emph{stepwise} method.
+\begin{mylist}
+\item \emph{forward selection}:\\
+\emph{1)} start with a model equation containing only a constant term\\
+\emph{2)} add the most significant variable until no other significant variable can be added\\
+
+\item \emph{backward elimination}:\\
+\emph{1)} start with the most complex model equation\\
+\emph{2)} drop the least significant variable until all variables are significant\\
+
+\item \emph{stepwise}:\\
+\emph{1)} start with a model equation containing only a constant term\\
+\emph{2)} add the variable with the smallest $p-$value (if it is significant)\\
+\emph{3)} drop the variable with the largest $p-$value (if it is not significant)\\
+repeat 2) and 3) until there is no variable to be added or dropped
+\end{mylist}
+
+This procedures should be used with caution and not mechanically! Without collinear data they will give nearly the same result.
+\end{newsbttl}
+% _________________________________ SESSION continued
+\sbttl{a regression session}
+\sbsbttl{revisited}
+\begin{newsbsbttl}
+\begin{Verbatim}
+f.min <- formula(Fertility ~ 1)
+f.max <- formula(Fertility ~ Education*Agriculture*Examination*Catholic*Infant.Mortality)
+
+m1 <- lm(Fertility ~ 1, data = swiss)             # step 1
+addterm(m1, scope=f.max, test="F")
+
+m2 <- update(m1, .~.+Education)                   # step 2
+dropterm(m2, test="F")
+addterm(m2, scope=f.max, test="F")
+             
+m3 <- update(m2, .~.+Catholic)                    # step 3
+dropterm(m3, test="F")
+addterm(m3, scope=f.max, test="F")
+
+m4 <- update(m3, .~.+Infant.Mortality)            # step 4
+dropterm(m4, test="F")
+addterm(m4, scope=f.max, test="F")
+
+m5 <- update(m4, .~.+Education:Catholic)          # step 5
+dropterm(m5, test="F")
+addterm(m5, scope=f.max, test="F")
+
+m6 <- update(m5, .~. + Agriculture)               # last step 
+dropterm(m6, test="F")
+addterm(m6, scope=f.max, test="F")
+
+# automatic model selection with AIC: stepwise
+step(m1, scope=list(upper=f.max, lower=f.min), direction="both")
+# automatic model selection with AIC: foreward
+step(m1, scope=list(upper=f.max, lower=f.min), direction="forward")
+# automatic model selection with AIC: backward
+m99 <- lm(f.max, data=swiss)                      # maximal model
+step(m99, scope=list(upper=f.max, lower=f.min), direction="backward")
+\end{Verbatim}
+\end{newsbsbttl}
+% _________________________________ PRACTICALS VI
+\begin{ttlex}
+\begin{exlist}
+\item Load the data set ``hills'' from package \Rpack{MASS}.\\
+The aim of analysing this data set is to find a formula that allows to predict the time of a race by the distance and the climb.
+\begin{exsblist}
+\item If you go on a walk how do you predict the time you need as a function of distance and climb?
+\item For a simpler interpretation, transform the variable ``dist'' in kilometers (1mile=1.609km) and the variable ``climb'' in meters (1feet=304.8mm).
+\item Fit a multiple regression using the variable ``dist'' and `` climb'' as predictors (without interaction). Does the model meet your expectations from exercise \emph{a)}?
+\item Inspect the model. Are there races with a high residual and/or leverage? -which?
+\item How many minutes of difference is between the predicted and the observed time of the ``Knock Hill'' race.
+\item If you study the coefficients of your model and their statistical significance carefully, you find a result that is impossible on physical grounds. Explain which coefficient is involved and why this result is impossible?
+\end{exsblist}
+\end{exlist}
+\end{ttlex}
+% _____________________________________________________________________________ LINEAR MODELS II
+\ttl{linear models II}
+\begin{newttl}
+a regression that is nonlinear in its parameters:\\
+\begin{tabular}{c>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+%\mathrm{E}[y_i] &=& e^{(\alpha + \beta x_{i})}\\
+%\\
+\emph{1)}&\mathrm{E}[log(y_i)]&=&\alpha + \beta x_i\\
+         &log(y_i) &\sim& indep. \quad \mathcal{N}(log(\alpha)+\beta log(x_i), \sigma^2)\\
+\\
+\emph{2)}&log(\mathrm{E}[y_i])&=&\alpha + \beta x_i\\
+         &y_i &\sim& indep. \quad  \mathcal{N}(e^{(\alpha + \beta x_i)}, \sigma^2)
+\end{tabular}
+%log(e^{(\alpha + \beta x_i)})
+
+The decision between this two is made by checking the homoscedasticity,\\
+in \emph{1)} $\log{y_i}$ is homoscedastic,\\
+in \emph{2)} $y_i$ is homoscedastic.
+\end{newttl}
+% _________________________________ SESSION
+\sbttl{a second regression session}
+\begin{newsbttl}
+\begin{Verbatim}
+data(mytrees)                           # library(asuR)
+
+m0 <- lm(log(Volume) ~ log(Girth)+ log(Height), data=mytrees)
+\end{Verbatim}
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+\mathrm{E}[y_{ij}] &=& \beta_0 + \beta_1 x_{1_i} + \beta_2 x_{2_j}\\
+y_{ij} &\sim& indep. \quad \mathcal{N}(\beta_0 + \beta_1 x_{1_i} + \beta_2 x_{2_j}, \sigma^2)\\
+\\
+\mathrm{E}[\log{Volume_{ij}}] &=& \log{Intercept} + \beta_1 \log{Girth_{i}} + \beta_2 \log{Height_{j}}\\
+\mathrm{E}[Volume_{ij}] &=& Intercept * Girth_i^{\beta_1} * Height_j^{\beta_2}\\
+\\
+\log{Volume_{ij}} &\sim&  indep. \quad \mathcal{N}(Intercept * Girth_i^{\beta_1} * Height_j^{\beta_2}, \sigma^2)\\
+\end{tabular}
+\end{newsbttl}
+% _____________________________________________________________________________ TAPPLY \& TABLE
+\ttl{tapply \& table}
+\begin{newttl}
+\begin{Verbatim}
+tapply(flowers$flower, flowers$alt, mean)
+
+           :    high      low 
+           : 20.7804 999.6610 
+\end{Verbatim}
+The function \Rfunc{tapply} is used to apply a function, here \Rfunc{mean}, to each group of components 
+of the first argument, here \texttt{flower}, defined by the levels of the second component, here \texttt{alt}.
+
+It is also possible to specify several grouping factors within a list,
+\begin{Verbatim}
+tapply(plants$height, list(plants$family, plants$type), mean, na.rm=FALSE)
+\end{Verbatim}
+
+To get a contingency table (a table with the number of elements in each segment) you can use,
+\begin{Verbatim}
+tapply(plants$height, list(plants$family, plants$type), length)
+table(plants$family, plants$type)
+
+           :            herbaceous shrub tree
+           :   Fabaceae        218    56    6
+           :   Rosaceae         76    76   28
+\end{Verbatim}
+\end{newttl}
+% _____________________________________________________________________________ LINEAR MODELS III
+\ttl{linear models III}
+\begin{newttl}
+ANCOVA, analysis of covariance:\\
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+\mathrm{E}[y_{ij}]&=&\beta_0 + \beta_{1_j} + \beta_2 x_i\\
+y_{ij} &\sim& indep. \quad \mathcal{N}(\beta_0 +\beta_{1_j} + \beta_2 x_i, \sigma^2)\\
+\end{tabular}
+\end{newttl}
+% _________________________________ ANCOVA SESSION
+\sbttl{an analysis of covariance session}
+\begin{newsbttl}
+
+\begin{Verbatim}
+plot(log(flower) ~ log(total), type="n", data=flowers)
+points(log(flower) ~ log(total), data=flowers[flowers$alt=="high",], col="red")
+points(log(flower) ~ log(total), data=flowers[flowers$alt=="low",], col="blue")
+abline(lm(log(flower) ~ log(total), data=flowers[flowers$alt=="high",]),col="red")
+abline(lm(log(flower) ~ log(total), data=flowers[flowers$alt=="low",]), col="blue")
+identify(log(flowers$flower) ~ log(flowers$total))
+
+# a model with two intercepts and two slopes
+m1 <-lm(log(flower) ~ alt/log(total) -1, data=flowers)
+# a model with two intercepts and one slope
+altdiff <- rbind("high-low"=c(1,-1))
+m2 <- lm(log(flower) ~ alt + log(total), data=flowers, contrasts=list(alt=mancontr(contr=altdiff)))
+ # are separate slopes needed?
+anova(m1, m2)
+
+#inspection
+inspect(m2)
+
+#different subsets
+subset <- c(1,9)
+m1.s1 <-update(m1, .~., subset=-c(subset))
+m2.s1 <- update(m2,.~., subset=-c(subset))
+anova(m1.s1, m2.s1)
+print(coef(m2))
+print(coef(m2.s1))
+print(diff <- coef(m2.s1)-coef(m2))
+summary(m2.s1)
+\end{Verbatim}
+\end{newsbttl}
+%_________________________________ 
+% pdf(file="~/checkouts/myRcourse/trunk/CourseNotes/plots/ancova.pdf", width=13/2.54, height=9/2.54)
+% dev.off()
+\begin{nextsbttl}
+\begin{Verbatim}
+#drawing a new plot with the fitted lines
+plot(log(flower) ~ log(total), type="n", data=flowers)
+points(log(flower) ~ log(total), data=flowers[flowers$alt=="high",], col="red", pch="h")
+points(log(flower) ~ log(total), data=flowers[flowers$alt=="low",], col="blue", pch="l")
+abline(-1.33038, 0.99920, col="red")
+abline(-2.0019, 0.99920, col="blue", lty=2)
+\end{Verbatim}
+\includegraphics[width=0.6\textwidth]{plots/ancova}
+% \begin{Verbatim}
+% #different subsets
+% subset <- c(1,9)
+% m1.s1 <-update(m1, .~., subset=-c(subset))
+% m2.s1 <- update(m2,.~., subset=-c(subset))
+% anova(m1.s1, m2.s1)
+% print(coef(m2))
+% print(coef(m2.s1))
+% print(diff <- coef(m2.s1)-coef(m2))
+% summary(m2.s1)
+% \end{Verbatim}
+\end{nextsbttl}
+% _________________________________ PRACTICALS VI
+\begin{ttlex}
+\begin{exlist}
+\item Load the data set ``gala'' from package \Rpack{asuR}. Read the documentation.
+\begin{exsblist}
+\item Select the predictors for a regression model of the number of tortoise species on the 30 Galapagos islands using stepwise model selection.
+\item What predictors would you select with a backwards and forewords model selection.
+\item Inspect the model you found in \emph{a)} carefully and describe possible deviations from the model assumptions. (islands with high leverage?, are this islands influential?, on which parameters? are there islands with high residuals?)
+\item Do you find a good transformation for the response variable or the predictors that bring you closer to the model assumptions?
+\end{exsblist}
+\item Load the data set ``cathedral'' from package \Rpack{asuR}. Read the documentation.
+\begin{exsblist}
+\item Perform an analysis of covariance.
+\item Make a scatterplot of the data and add your final model line(s).
+\end{exsblist}
+\end{exlist}
+\end{ttlex}
+% _____________________________________________________________________________ GLM
+\ttl{Generalized Linear Models}
+\begin{newttl}
+% \begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+% \mathrm{E}[y_{ij}]&=&\beta_0 + \beta_{1_j} + \beta_2 x_i\\
+% y_{ij} &\sim& indep. \quad \mathcal{N}(\beta_0 +\beta_{1_j} + \beta_2 x_i, \sigma^2)\\
+% \end{tabular}
+\end{newttl}
+% _________________________________ Basic structure
+\ttl{glm}
+\sbttl{basic structure}
+\begin{newsbttl}
+A generalized linear model is determined by:
+\begin{mysblist}
+\item the form of the linear predictor, $\eta$ (coding and selection of predictor variables)\\
+  $\eta = \mathbf{z}_i^T\mathbf{\beta} \quad (\mathrm{e.g.,} \,\alpha + \beta x_{i})$
+\item the response or link function, $h$ or $g$\\
+     $\mu_{i}=h(\eta_{i})=h(\alpha + \beta x_{i})$\\
+     link function, $g$ (the inverse of $h$):\\
+     $g(\mu_{i})=\nu_{i}=\alpha + \beta x_{i}$\\
+\item the type of the exponential family which specifies the distribution of $y_i$, given $z_i$
+\end{mysblist}
+%
+% \begin{tabular}{c>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+% %\mathrm{E}[y_i] &=& e^{(\alpha + \beta x_{i})}\\
+% %\\
+% \emph{1)}&\mathrm{E}[log(y_i)]&=&\alpha + \beta x_i\\
+%          &log(y_i) &\sim& indep. \quad \mathcal{N}(log(\alpha)+\beta log(x_i), \sigma^2)\\
+% \\
+% \emph{2)}&log(\mathrm{E}[y_i])&=&\alpha + \beta x_i\\
+%          &y_i &\sim& indep. \quad  \mathcal{N}(e^{(\alpha + \beta x_i)}, \sigma^2)
+% \end{tabular}
+\end{newsbttl}
+% _________________________________ Continuous Response
+
+\sbttl{continuous response: normal regression}
+\begin{newsbttl}
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$} l}
+\eta_{i}&=& \alpha + \beta x_i &linear predictor\\
+\mathrm{E}[y_i] &=&  h(\eta_{i}) = \eta_{i}&response function: identity\\
+y_i &\sim& indep. \quad \mathcal{N}( \alpha + \beta x_i, \sigma^2)&distribution: normal with constant variance
+\end{tabular}
+
+<<<eval=FALSE, echo=TRUE>>=
+m.lm <- lm(Fertility ~ Education, data=swiss)
+m.glm <- glm(Fertility ~ Education, data=swiss, family=gaussian(link=identity))
+@ 
+\myplot{\mbox{}}{distribution of $y_i \mid x$ around the regression line}{plots/example2.pdf}
+\end{newsbttl}
+% _________________________________ log link
+\sbttl{countinous response: normal regression with log link}
+\begin{newsbttl}
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$} l}
+\eta_{i}&=& \alpha + \beta x_i &linear predictor\\
+\mathrm{E}[y_i] &=&  h(\eta_{i}) = e^{(\eta_{i})} = e^{\alpha} \cdot e^{\beta x_i}&response function: exponential\\
+y_i &\sim& indep. \quad \mathcal{N}(e^{\alpha} \cdot e^{\beta x_i}, \sigma^2)&distribution: normal with constant variance
+\end{tabular}
+
+<<<eval=FALSE, echo=TRUE>>=
+m.glm.gl <- glm(Fertility ~ Education, data=swiss, family=gaussian(link=log))
+#model <- glm(Fertility ~ Education, data=swiss, family=quasi(link=log, variance=constant))
+@ 
+
+\myplot{\mbox{}}{distribution of $y_i \mid x$ around the regression line}{plots/example2a.pdf}
+\end{newsbttl}
+% _________________________________ gamma, log link
+\sbttl{countinous response: log link with a gamma distribution}
+\begin{newsbttl}
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$} l}
+\eta_{i}&=& \alpha + \beta x_i&linear predictor\\
+\mathrm{E}[y_i] &=&  h(\eta_{i}) = e^{(\eta_{i})} = e^{\alpha} \cdot e^{\beta x_i}&response function: exponential\\
+y_i &\sim& indep. \quad \mathbf{\Gamma}\{\phi, \phi/(\alpha + \beta x_i)\}&distribution
+\end{tabular}
+
+<<eval=FALSE, echo=TRUE>>=
+#model <- glm(Fertility ~ Education, data=swiss, family=quasi(link=log, variance=mu^2))   # about the same
+m.glm.Gl <- glm(Fertility ~ Education, data=swiss, family=Gamma(link=log))
+@ 
+
+\myplot{\mbox{}}{distribution of $y_i \mid x$ around the regression line}{plots/example2b.pdf}
+
+\end{newsbttl}
+% _________________________________ inspect
+\sbttl{inspection}
+\begin{newsbttl}
+% residuals in glm:
+% 1) normal: difference between model and data
+% 2) but in GLM variance of response is not constant
+% 3) $r_P$=\frac{y-\mu}{\sqrt{\mathrm{V}(\hat{\mu})}}; note: $\sumr^2_P=\hi^2$ (Pearson's $\chi^2$ statistic)\\
+%  \Verb|residuals(mymodel, "pearson")|
+% 4) $r_D$, deviance residuals, such that the $\sum{r_D^2}=\mathrm{deviance}$\\
+% \Verb|residuals(mymodel)
+% 5) $r_R$, response residuals, just response minus fitted values, $y - \hat{\mu}$\\
+% \Verb|residuals(mymodel, "response"|
+% 6) attention! never use \Verb|residuals(mymodel, "working")| or \Verb|mymodel$residuals| unless you know what you are doing!
+
+%\begin{mysblist}
+%\item 
+
+  \myitem{Plot the deviance residuals versus the estimated values of the linear predictor}
+  % the single most valuable plot
+<<eval=FALSE, echo=TRUE>>=
+dep(your.model)
+@ 
+
+Questions:
+\begin{description}
+\item  A) is the relationship linear?
+\item otherwise:
+  \begin{enumerate}
+\item change the choice of predictors
+\item change the transformations of the predictor
+\item change the link function (but there are only few choices...)
+\item do not transform the response in glm since this would change the distribution of the response (you would do this in a lm) 
+%\item[] try first step 1) & 2) because they disruption the glm model less than 3) or 4)
+\end{enumerate}
+\item  B) is the variance constant?
+\item if not:
+\begin{enumerate}
+\item change the variance function % (but this would need to use a quasi-likelihood)
+\item use weights if you identify some features of the data that suggest a suitable choice
+\end{enumerate}
+\end{description}
+\end{newsbttl}
+%___________ rpp.glm()
+\begin{nextsbttl}
+
+\myitem{relationship between predictors and response}
+
+A partial residual plot allows to study the effect of the predictor in focus and taking the other predictors into account.
+Partial residuals are calculated as:
+\begin{equation}
+e_{ij}^* = e_i + \hat{\beta}_j\mathbf{X}_{ij}
+\end{equation}
+
+<<eval=FALSE, echo=TRUE>>=
+rpp(your.model)
+@ 
+
+Question:
+\begin{description}
+\item Is the relationship linear? 
+\item otherwise:
+\begin{enumerate}
+\item change the transformations of the predictor
+\end{enumerate}
+\end{description}
+\end{nextsbttl}
+%___________ lep.glm()
+\begin{nextsbttl}
+
+\myitem{checking the link assumption}
+
+%After eliminating simpler violations of the assumptions (outliers, or transformation of predictors).
+Plotting the linearized response against the linear predictor, $\hat{\eta}$
+
+<<eval=FALSE, echo=TRUE>>=
+lep(your.model)
+@ 
+
+Question:
+\begin{description}
+\item Is the relationship linear?
+\item otherwise:
+\begin{enumerate}
+\item change the link function
+\end{enumerate}
+\end{description}
+\end{nextsbttl}
+%___________ hnp.glm()
+\begin{nextsbttl}
+  
+\myitem{unusual points}
+
+<<eval=FALSE, echo=TRUE>>=
+hnp(your.model)
+@ 
+
+Question:
+\begin{description}
+\item are there points off the trend?
+\item otherwise:
+\begin{enumerate}
+\item Is the data point correct?
+\end{enumerate}
+\end{description}
+\end{nextsbttl}
+% _________________________________ Binomial Response
+\sbttl{binomial response with continuous covariate}
+\begin{newsbttl}
+odds: $\gamma(\pi)=\frac{\pi}{1-\pi}$ , where $\pi$ is the probability of success.
+
+
+
+
+
+% $\beta = Logit(x + 1) - Logit(x)$
+% $\beta$ measures the increase in Logits if $x$ is increased by one unit.
+
+
+
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$} l}
+\eta_{i}&=& \alpha + \beta x_i&linear predictor\\
+\mathrm{E}[y_i]&=&\pi_i =  h(\eta_{i}) = exp(\eta)/(1+exp(\eta)) &link function g(): logit\\
+y_i &\sim& indep. \quad \mathcal{B}(\pi_i)\mathrm{, with var(}y-i)=\pi_i(1-\pi_i)&distribution: Bernoulli
+\end{tabular}
+
+$\frac{\pi}{1-\pi}=exp(\alpha + \beta x_i)$, and therefore\\
+$e^\beta = \frac{\gamma(x + 1)}{\gamma(x)}$
+
+This shows that the coefficient $\beta$ can be interpreted in a natural way because $e^\beta$ corresponds to the factor by which odds, $\gamma(x)$, increase (if $\beta>0$) or decrease (if $\beta<0$) if $x$ is increased by one unit.
+\end{newsbttl}
+%___________ an example
+\begin{nextsbttl}[example]
+
+<<eval=FALSE,echo=TRUE>>=
+model.glm <- glm(fail ~ temperature, data=oring, family=binomial)
+summary(model.glm)
+## Coefficients:
+##             Estimate Std. Error z value Pr(>|z|)  
+## (Intercept)  15.0429     7.3786   2.039   0.0415 *
+## temperature  -0.2322     0.1082  -2.145   0.0320 *
+## trellis.device(device="pdf", file="~/temp/oring.pdf", color = TRUE, width=13/2.54, height=9/2.54)
+## grid.newpage()
+## pushViewport(plotViewport(c(5,4,2,2)))
+## grid.rect()
+## vp.data <- dataViewport(xscale=c(50,95), yscale=c(0,1))
+## pushViewport(vp.data)
+## grid.xaxis()
+## grid.yaxis()
+## grid.text("temperature", y=unit(-3, "lines"))
+## grid.text("probability of failure", x=unit(-3, "lines"), rot=90)
+## grid.points(x=oring$temperature, y=as.numeric(oring$fail)-1, gp=gpar(col="blue"))
+## x.i <- seq(from=50, to=95, length=100)
+## grid.lines(x=unit(x.i, "native"), y=unit(exp(15+x.i*-0.23)/(1+exp(15+x.i*-0.23)), "native"))
+## grid.rect()
+## dev.off()
+@ 
+\begin{Verbatim}
+             : ...
+             : Coefficients:
+             :             Estimate Std. Error z value Pr(>|z|)  
+             : (Intercept)  15.0429     7.3786   2.039   0.0415 *
+             : temperature  -0.2322     0.1082  -2.145   0.0320 *
+             : ...
+\end{Verbatim}
+\myplot{\mbox{}}{probability of an O-ring failure over a temperature range. In this example $\beta=-0.2322$, which means that the odds decrease with every degree Fahrenheit by $e^{-0.2322}=0.793$. Another helpful mark is the temperature where half of all O-rings fail $-\alpha/\beta=-15.0429/-0.2322=64.8$}{plots/oring.pdf}
+\end{nextsbttl}
+% _________________________________ Binomial Response with categorical covariate
+\sbttl{binomial response with categorical covariate}
+\begin{newsbttl}
+
+There are three forms to specify a generalized linear models for this data:
+\begin{enumerate}
+\item 
+\begin{myRcode}{}
+y.matrix <- cbind(\#success, \#faillures)
+\end{myRcode}
+\begin{myRcode}{}
+model <- glm(y.matrix \verb|~| \ldots , family=binomial)
+\end{myRcode}
+\item 
+with success as a logical vector or a two-level factor (the first level is treated as 0, all others as 1!)
+\begin{myRcode}{}
+\end{myRcode}
+\begin{myRcode}{}
+success <- c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE,...)
+\end{myRcode}
+or
+\begin{myRcode}{}
+success <- factor(c(0,1,0,1,0,1,1,0,0,...))
+\end{myRcode}
+\begin{myRcode}{}
+model <- glm(success \verb|~| \ldots , family=binomial)
+\end{myRcode}
+\item 
+\begin{myRcode}{}
+y <- \#success/\#total
+\end{myRcode}
+\begin{myRcode}{}
+weight <- \#success*\#total
+\end{myRcode}
+\begin{myRcode}{}
+model <- glm(y \verb|~| \ldots , family=binomial, weights=weight)
+\end{myRcode}
+\end{enumerate}
+\end{newsbttl}
+% _________________________________ unemployment example
+\begin{nextsbttl}[example]
+Duration of unemployment:\\
+\begin{tabular}{cccc}
+&$\leq6$ months&$>6$ months\\
+male&403&167\\
+female&238&175\\
+\end{tabular}
+
+<<eval=FALSE,echo=TRUE>>=
+data(unemployment, package="asuR")
+#
+my.contrast.matrix <- rbind("male-female"=c(1,-1))
+my.model.object <- glm(success~gender, data=unemployment, family=binomial, contrasts=list(gender=mancontr(my.contrast.matrix)))
+summary(my.model.object)
+
+exp(0.5735)
+#
+
+p <- c(female=175/(238+175), male=167/(403+167))
+odds <- p/(1-p)
+odds["female"]/odds["male"]
+@ 
+
+
+\end{nextsbttl}
+% % _________________________________ Poisson Response
+% \sbttl{count response}
+% \begin{newsbttl}
+% % If the count is bouned: binomial response is probably better
+% If counts are sufficiently large a normal approximation is justified. 
+% \end{newsbttl}
+% _________________________________ PRACTICALS VIII
+\begin{ttlex}
+\begin{exlist}
+\item Describe the three elements that determine a generalized linear model?
+%
+\item Load the data set ``gala'' from package \Rpack{asuR} again.
+\begin{exsblist}
+\item Fit a generalized linear model to the data by selecting an appropriate distribution, a link function, the predictor variables and their transformation.  Discuss your selections.
+\item Compare with the model that you selected in the previous practicals.
+\end{exsblist}
+%
+\item Load the data set ``budworm'' from package \Rpack{asuR}.
+\begin{exsblist}
+\item Is there a difference in death rate between genders?
+\item Do the genders respond differently to an increasing dose of toxin?
+\end{exsblist}
+\end{exlist}
+\end{ttlex}
+% _____________________________________________________________________________  Random Effects
+%\ttl{linear models IV}
+\ttl{random effects}
+\begin{newttl}
+\begin{mylist}
+\item[fixed effect] An effect that is attributable to a finite set of levels of a factor that occur in the data and which are there because we are interested in them. The interest in fixed effects lies in estimating the mean.
+\item[random effect] An effect that is attributable to a (usually) infinite set of levels of a factor, of which only a random sample are deemed to occur in the data. The interest in random effects lies in estimating their variance. Random effects are not defined on a continuum but they are generally real objects.
+\end{mylist}
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+\mathrm{E}[y_{ijk}\mid a_i]&=&\mu + a_i + \beta_j\\
+y_{ijk}\mid a_i &\sim& indep. \quad \mathcal{N}(\mu + a_i + \beta_j;\quad \sigma_a^2 + \sigma^2)\\
+\end{tabular}
+\end{newttl}
+% _________________________________ NESTED
+\sbttl{nested random factors}
+\begin{newsbttl}
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+\mathrm{E}[y_{tijk}\mid s_i, c_{ij}]&=&\mu + \beta_t + s_i +c_{ij}\\
+y_{tijk}\mid s_i, c_{ij} &\sim& indep. \quad \mathcal{N}(\mu + \beta_t + s_i +c_{ij};\quad \sigma_s^2 + \sigma_c^2 + \sigma^2)\\
+\end{tabular}
+\begin{Verbatim}
+m0 <- lmer(y ~ gen + (1|school/class), data=schoolclass)
+\end{Verbatim}
+\end{newsbttl}
+% _________________________________ CROSSED
+\sbttl{crossed random factors}
+\begin{newsbttl}
+\begin{tabular}{>{$}r<{$}>{$} c <{$}>{$} l <{$}}
+\mathrm{E}[y_{tijk}\mid r_i, c_j]&=&\mu + \beta_t + r_i +c_j\\
+y_{tijk}\mid r_i, c_j &\sim& indep. \quad \mathcal{N}(\mu + \beta_t + r_i +c_j;\quad \sigma_r^2 + \sigma_c^2 + \sigma^2)\\
+\end{tabular}
+\begin{Verbatim}
+m0 <- lmer(int ~ trt + (1|row) + (1|col), data=wellplate)
+\end{Verbatim}
+\end{newsbttl}
+%_________________________________ TEST EXAM
+\ttl{ test exam}
+\begin{ttlex}
+\begin{exlist}
+\item Load the data set ``flowers'' form package \Rpack{asuR}.
+\begin{exsblist}
+\item Sort the data set by the variable ``alt'' and within ``alt'' sort it by the variable ``total''.
+\item Count the number of plants with flowers that are heavier than $20~mg$ at high and low altitude.
+\item Put the rows of the data set in a random order.
+\item Produce a scatterplot of with the variable ``total'' on the $x-$axis and the variable ``flower'' on the $y-$axis. Use a different plotting style for plants from high and low altitude, that on a black and white print it is easy to distinguish between them.
+\item Produce a histogram with a density estimate for the total plant mass of species from high altitude. Redo the same plot after taking the logarithm of plant mass. Which data characteristics change (text)? Is the data normally distributed (text)?
+\end{exsblist}
+\end{exlist}
+\end{ttlex}
+% ___________
+% ex2
+\begin{nextex}
+\begin{exlist}
+\setcounter{practicals}{1}
+ \item Load the data set ``weight'' from package \Rpack{asuR}.
+\begin{exsblist}
+\item Calculate the mean and variance for all four combinations of protein \texttt{source} and \texttt{amount}.
+\item To study the \texttt{weightgain} in rats, fit an two-way analysis of variance with an interaction term to the data.
+\item (text) Inspect the model. Describe one diagnostic plot you are looking at. Which assumption(s) can you inspect with this plot? What pattern do you expect to see. Do you find this pattern? Are there deviations from you expectation?
+\item You do not remember how the contrasts option is set on your computer anymore. Set the contrasts manually to compare the \texttt{weightgain} for proteins from ``Beef'' and ``Cereal''. What is the estimate for the difference between the two protein sources?
+\end{exsblist}
+\end{exlist}
+\end{nextex}
+% ___________
+% ex2
+\begin{nextex}
+\begin{exlist}
+\setcounter{practicals}{2}
+ \item Load the data set ``BtheB'' from package \Rpack{asuR}. (bdi means: ``Beck Depression Inventory'')
+\begin{exsblist}
+\item Rearrange the data from the ``wide form'' in which it appears into the ``long form'' in which each separate repeated measurement and associated covariate values appear as a separate row in a data frame. Make one column called \texttt{drug, length, treatment, bdi.pre, subject, time, bdi}.
+\item Construct the boxplots of each of the five repeated measures separately for each treatment group. (You can run the example code from the documentation of the data set to see how the result should look; use the methods and functions we learned in the course to construct similar plots)
+\item Fit a linear mixed effect model where the subject has a random effect on the intercept (using \Rfunc{lmer} from library \Rpack{lme4}).
+\item Fit a linear mixed effect model where the subject has a random effect on the intercept and the slope.
+\item Test whether the more complex model is significantly better than the simple one.
+\end{exsblist}
+\end{exlist}
+\end{nextex}
+%_____________________________________________________________________________ Bootstrap
+\ttl{bootstrap}
+\begin{newttl}
+\end{newttl}
+%_________________________________ 
+\sbttl{nonparametric bootstrap}
+\begin{newsbttl}
+<<examples, eval=FALSE>>=
+data(flowers)
+plantmass <- flowers[flowers$alt=="high","total"]
+### the mean pant mass for alpine species
+#################################
+# non-parametric bootstrap
+#################################
+flowers.fun <- function(data,i){
+  mean(data[i])
+}
+
+b0.n <- boot(data=flowers[flowers$alt=="high","total"], statistic=flowers.fun, R=99)
+
+plot(b0.n)
+print(b0.n)
+# expected sd of the mean
+mean(plantmass)-qt(0.975, length(plantmass)-1)*sqrt(var(plantmass))/sqrt(length(plantmass))
+mean(plantmass)+qt(0.975, length(plantmass)-1)*sqrt(var(plantmass))/sqrt(length(plantmass))
+sqrt(var(plantmass))/sqrt(length(plantmass))
+# ci
+boot.ci(b0.n, type=c("perc"), conf=0.9)
+sort(b0.n$t)
+#
+boot.ci(b0.n, type=c("basic"), conf=0.9)
+boot.ci(b0.n, type=c("norm"), conf=0.9)
+@ 
+\end{newsbttl}
+%_________________________________ parametric
+\sbttl{parametric}
+\begin{newsbttl}
+<<parametric, eval=FALSE>>=
+#################################
+### parametric bootstrap
+#################################
+flowers.fun <- function(data){
+  mean(data)
+}
+
+flowers.sim <- function(data, mle){
+  rnorm(length(data), mean=mle[1], sd=mle[2])
+}
+
+flowers.mle <- c(mean(plantmass), sqrt(var(plantmass)))
+
+b0.p <- boot(data=plantmass, statistic=flowers.fun,  R=99, sim="parametric", ran.gen=flowers.sim, mle=flowers.mle)
+
+plot(b0.p)
+print(b0.p)
+# ci
+boot.ci(b0.p, type=c("perc", "basic", "norm"), conf=0.9)
+@ 
+\end{newsbttl}
+%_________________________________ parametric
+\sbttl{application in linear regression}
+\begin{newsbttl}
+<<parametric, eval=FALSE>>=
+#################################
+### bootstrapping a REGRESSION
+#################################
+
+fit.model <- function(data,i){
+  l1 <- lm(log(flower) ~ log(total) + alt, data=data[i,])
+  coef(l1)["altlow"]
+}
+
+b0 <- boot(data=flowers, statistic=fit.model, R=99)
+#ci
+boot.ci(b0, type=c("norm", "perc", "basic"))
+
+@ 
+\end{newsbttl}
+% ============================================================================= References
+
+\ttl{}
+\begin{newttl}
+\bibliography{stats,BIOarticles}
+\end{newttl}
+% _____________________________________________________________________________ SOLUTIONS
+\ttl{solutions}
+% ___________ 
+\sbttl{practicals I}
+\begin{newsbttl}
+\begin{exlist}
+\item see the sequence of logical operators in the appendix
+\item 
+<<introduction::ex2, eval=FALSE>>=
+rep(1:3, each=2)
+    rep(1:2, times=3)
+    rep(1:3, each=2, times=3)
+@ 
+\item 
+<<introduction::ex3, eval=FALSE>>=
+    paste("trt:",rep(1:3, each=2), sep="")
+    paste("ind:", rep(c(1,2), times=3), sep="")
+@ 
+\item
+<<introduction::ex4, eval=FALSE>>=
+experiment <- data.frame(treatment=paste("trt:",rep(1:3, each=2), sep=""), individual= paste("ind:", rep(c(1,2), times=3), sep=""))
+# dimension
+dim(experiment)
+# class
+str(experiment)
+# add column
+experiment <- cbind(experiment, 2:7)
+# save .Rdata
+save(experiment, file="~/Desktop/experiment.Rdata")
+rm(experiment)
+load(file="~/Desktop/experiment.Rdata")
+# write read .txt
+write.table(experiment, file="~/Desktop/experiment.txt")
+rm(experiment)
+experiment <- read.table(file="~/Desktop/experiment.txt", header=TRUE)
+@
+\end{exlist}
+\end{newsbttl}
+% ___________
+\sbttl{practicals II}
+\begin{newsbttl}
+\begin{exlist}
+\item
+<<indexing::ex1, eval=FALSE>>=
+mat <- matrix(1:16, nrow=4)
+#third column
+mat[,3]
+# diagonal elemets
+diagonal <- diag(mat)
+# or by hand
+dia <- cbind(c(1:4),c(1:4))
+diagonal <- mat[dia]
+# antidiagonal elements
+antidia <- cbind(c(1:4), c(4:1))
+antidiagonal <- mat[antidia]
+@
+\item 
+<<indexing::ex2, eval=FALSE>>=
+vec <- as.integer(1:1000)
+even.numbers <- seq(from=2, to=1000, by=2)
+even.numbers <- vec[vec%%2==0] # mutch more elegant by taking the modulo function
+vec[even.numbers] <- 1/vec[even.numbers]
+
+vec[seq(from=2, to=1000, by=2)] <- 1/(vec[seq(from=2, to=1000, by=2)]) # very compact
+@ 
+\item
+<<indexing::ex 3, eval=FALSE>>=
+# read doc
+help(swiss)
+# sort agriculture
+swiss[order(swiss$Agriculture),]
+# add religion
+swiss <- cbind(swiss, religion=factor(NA, levels=c("catholic", "protestant")))
+swiss$religion[swiss$Catholic>=50] <- "catholic"
+swiss$religion[swiss$Catholic<50] <- "protestant"
+# sort religion and agriculture
+swiss[order(swiss$religion, swiss$Agriculture),]
+# sort provinces
+swiss[order(row.names(swiss)),]
+order(row.names(swiss))[dim(swiss)[1]:1] # for decreasing ordering
+order(row.names(swiss), decreasing=TRUE) # for decreasing ordering made simple
+# random order
+swiss[sample(row.names(swiss)),]
+# remove education
+swiss$Education <- NULL
+@ 
+\end{exlist}
+\end{newsbttl}
+% ___________
+\sbttl{practicals III}
+\begin{newsbttl}
+\begin{exlist}
+\item 
+<<graphics::ex1, eval=FALSE>>=
+data(trees)
+# a)
+pairs(trees)
+xxp(trees)
+# b)
+pdf(file="~/Desktop/trees_example.pdf", width=13/2.540, height=9/2.540)
+plot(trees$Volume ~ trees$Girth)
+plot(Volume ~ Girth, data=trees)
+plot(trees$Girth, trees$Volume) # in dieser form funktioniert data= nicht!
+dev.off()
+# c)
+@ 
+\item
+<<graphics::ex2, eval=FALSE>>=
+hist(swiss$Fertility)
+plot(swiss$religion, swiss$Fertility)
+@ 
+\item
+<<graphics::ex3, eval=FALSE>>=
+pdf("~/Desktop/swissdata.pdf", width=13/2.540, height=9/2.540)
+par(mar=c(4,4,4,4))
+plot(Agriculture~Fertility, data=swiss, main="swiss data (1888)", xlab="fertility", xlim=c(1,100), ylim=c(1,100), axes=FALSE, ylab="", col="red")
+points(Examination~Fertility, data=swiss, pch=3, xlim=c(1,100), col="blue")
+axis(side=1)
+axis(side=2, col.axis="red", col="red")
+mtext(text="agriculture", side=2, line=3,col="red")
+axis(side=4, col.axis="blue", col="blue")
+mtext(text="examination", side=4, line=3,col="blue")
+legend(x=10,y=90,legend=c("agriculture","examination"),col=c("red","blue"), text.col=c("red","blue"), pch=c(1,3))
+dev.off()
+@
+
+\end{exlist}
+\end{newsbttl}
+% ___________
+\sbttl{practicals IV}
+\begin{newsbttl}
+\begin{exlist}
+\item
+<<ex1, eval=FALSE>>=
+# ex1
+t.sample <- rt(100, df=3)
+# a)
+qqnorm(t.sample)
+qqline(t.sample)
+# b)
+hist(t.sample, freq=FALSE)
+lines(density(t.sample)) # if you like
+@ 
+\item
+<<ex2, eval=FALSE>>=
+# ex2
+norm.sample <- rnorm(100)
+# a)
+qqnorm(norm.sample)
+qqline(norm.sample)
+#
+hist(norm.sample)
+@ 
+\item
+<<ex3, eval=FALSE>>=
+pdf("~/Desktop/comparet_norm.pdf", width=20/2.540, height=20/2.540)
+par(mfrow=c(2,2))
+# first panel
+qqnorm(t.sample)
+qqline(t.sample)
+# second panel
+qqnorm(norm.sample)
+qqline(norm.sample)
+# third panel
+hist(t.sample)
+# fourth panel
+hist(norm.sample)
+dev.off()
+## # ex3
+## pdf("~/Desktop/comparet_norm.pdf", width=20/2.540, height=20/2.540)
+## par(mfrow=c(2,2))
+## sample.lim <- range(c(t.sample, norm.sample))
+## density.lim <- range(c(hist(t.sample, plot=FALSE)$density, hist(norm.sample, plot=FALSE)$density))
+## quantile.lim <- range(c(qqnorm(t.sample, plot.it=FALSE)$x, qqnorm(norm.sample, plot.it=FALSE)$x))
+## # first panel
+## plot(qqnorm(t.sample, plot.it =FALSE)$y ~ qqnorm(t.sample, plot.it =FALSE)$x, xlim=sample.lim, ylim=quantile.lim)
+## qqline(t.sample)
+## # second panel
+## plot(qqnorm(norm.sample, plot.it=FALSE), ylim=sample.lim, xlim=quantile.lim)
+## qqline(norm.sample)
+## # third panel
+## hist(t.sample, freq=FALSE,  xlim=sample.lim, ylim=density.lim)
+## # fourth panel
+## hist(norm.sample, freq=FALSE, xlim=sample.lim, ylim=density.lim)
+## dev.off()
+# a)
+
+# with e.g., ylim=c(-3,3)
+@ 
+
+\end{exlist}
+\end{newsbttl}
+% ___________ PRACTICALS V
+\sbttl{practicals V}
+\begin{newsbttl}
+\begin{exlist}
+\item 
+<<eval=FALSE, echo=TRUE>>=
+  m <- aov((Y1+Y2)/2 ~ Loc + Var, data=immer)
+  summary(m)
+  co <- rbind("C-D"=c(1,-1,0,0,0,0))
+  m1 <- aov((Y1+Y2)/2 ~ Loc + Var, contrasts=list(Loc=mancontr(co)),data=immer)
+  tk <- TukeyHSD(m, which="Var")
+  plot(tk)
+  densityplot(~(Y1+Y2)/2|Var, data=immer)
+  tapply((immer$Y1+immer$Y2)/2, immer$Var, mean)
+@
+
+\end{exlist}
+\end{newsbttl}
+
+% ___________ PRACTICALS VI
+\sbttl{practicals VI}
+\begin{newsbttl}
+\begin{exlist}
+\item 
+<<eval=FALSE>>=
+### a)
+## time (hours) = (1/300)*climb(m)  +  (1/4)*distance(km)
+## time (hours) = 0.00333*climb(m)  +  0.25*distance(km)
+### b)
+data(hills)
+hills.si <- hills
+hills.si$dist <- hills.si$dist*1.609
+hills.si$time <- hills.si$time/60
+## why did you know that distance? see the help!!
+hills.si$climb <- hills.si$climb*0.3048
+### c)
+n0 <- lm(time ~ dist + climb, data=hills.si)
+# NO!
+### d)
+plot(n0)
+inspect(n0)
+influence.measures(n0)
+summary(n0)
+### e)
+residuals(n0)["Knock Hill"]
+## original time
+hills.si[row.names(hills.si)=="Knock Hill","time"]
+
+n0.s1 <- update(n0, .~., subset=-18)
+
+
+n1 <- lm(time ~ dist*climb, data=hills.si, subset=-18)
+
+inspect(n0)
+@
+
+\end{exlist}
+\end{newsbttl}
+% ___________ PRACTICALS VIII
+\sbttl{practicals IX}
+\begin{newsbttl}
+\begin{exlist}
+\item 
+<<ex1, eval=FALSE>>=
+data(flowers)
+
+flowers[order(flowers$alt, flowers$total),]
+
+subset <- flowers[flowers$flower>20,]
+table(subset$alt)
+
+flowers[sample(row.names(flowers)),]
+
+plot(flower ~ total, type="n", data=flowers)
+points(flower ~ total, data=flowers[flowers$alt=="high",], col="red", pch="h")
+points(flower ~ total, data=flowers[flowers$alt=="low",], col="blue", pch="l")
+
+par(mfrow=c(1,2))
+x <- flowers[flowers$alt=="high","total"]
+hist(x, freq=FALSE, main="untransformed")
+lines(density(x))
+hist(log(x), freq=FALSE, main="log transformed")
+lines(density(log(x)))
+norm(log(x))
+@
+\end{exlist}
+\end{newsbttl}
+% ___________ PRACTICALS VIII
+\begin{newsbttl}
+\begin{exlist}
+\setcounter{practicals}{1}
+\item 
+<<ex2, eval=FALSE>>=
+tapply(weight$weightgain, list(weight$source, weight$type), mean)
+tapply(weight$weightgain, list(weight$source, weight$type), var)
+
+m1 <- lm(weightgain ~ source * type, data=weight)
+
+levels(weight$source)
+newcontr <- rbind("beef-cereal"=c(1,-1))
+m1 <- lm(weightgain ~ source * type, data=weight, contrasts=list(type=mancontr(newcontr)))
+@
+\end{exlist}
+\end{newsbttl}
+%___________ 
+\begin{newsbttl}
+\begin{exlist}
+\setcounter{practicals}{2}
+\item 
+<<ex3, eval=FALSE>>=
+data(BtheB)
+BtheB$subject <- factor(row.names(BtheB))
+nobs <- nrow(BtheB)
+
+BtheB.long <- reshape(BtheB, idvar="subject", varying=c("bdi.2m", "bdi.4m", "bdi.6m", "bdi.8m"), direction="long")
+BtheB.long$time <- rep(c(2,4,6,8), rep(nobs,4))
+
+plot( bdi ~ time, data=BtheB.new[treatment=="TAU", ], xlab="Time (in months)", ylab= "BDI",main="Treated as Usual", ylim=c(0, 55)) 
+plot( bdi ~ time, data=BtheB.new[treatment=="BtheB", ], xlab="Time (in months)", ylab= "BDI",main="Beat the Blues", ylim=c(0, 55)) 
+
+btb.1 <- lmer(bdi ~bdi.pre + time + treatment + drug + length + (1|subject), data=BthtB_long, na.action=na.omit)
+btb.2 <- lmer(bdi ~bdi.pre + time + treatment + drug + length + (time|subject), data=BthtB_long, na.action=na.omit)
+anova(btb1, btb.2)
+# NOTE:
+# compare only models with the same structure of fixed effects; otherwise use method="ML"
+@
+\end{exlist}
+\end{newsbttl}
+% _____________________________________________________________________________ APPENDIX
+\ttl{appendix}
+% _________________________________ ORDER, SORT, RANK
+\sbttl{order, sort, rank, sample}
+\begin{newsbttl}
+\begin{Verbatim}
+data                                    : [1] 0.6 0.5 0.2 0.1 0.9 0.4 0.3 0.8 0.7
+sort(data)                              : [1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9
+order(data)                             : [1] 4 3 7 6 2 1 9 8 5
+rank(data)                              : [1] 6 5 2 1 9 4 3 8 7
+sample(data)                            : [1] 0.5 0.8 0.1 0.4 0.3 0.7 0.2 0.9 0.6
+\end{Verbatim}
+
+Application:\\
+\begin{Verbatim}
+dat <- data.frame(trt=c("cold","hot","cold","cold","hot","hot"), growth=c(8.5,9.8,5.1,6.2,7.1,8.6))
+\end{Verbatim}
+
+Sort a data frame according to the treatment (variable ``trt''):\\
+\Verb|dat[order(dat$trt),]|
+
+Put the rows of the data frame in a random order:\\
+\Verb|dat[sample(row.names(dat))],|
+\end{newsbttl}
+% _________________________________ logical operators
+\sbttl{locigal operators}
+\begin{newsbttl}
+\begin{Rlist}
+  \SaveVerb{ex}=[=
+  \SaveVerb{exex}=[[=
+  \SaveVerb{h}=^=
+  \SaveVerb{dol}=$=
+  \SaveVerb{affe}=@=
+  \SaveVerb{pi}=|=
+  \SaveVerb{ti}=~=
+  \SaveVerb{aas}=<=
+\item[\protect\UseVerb{dol}] list extraction
+\item[\protect\UseVerb{affe}] slot extraction
+\item[\protect\UseVerb{ex} \protect\UseVerb{exex}] vector \& list element extraction
+\item[\protect\UseVerb{h}] exponentiation
+\item[-] unary minus
+\item[:] sequence generation
+\item[\%\% \%/\% \%*\%] and other special operators \%\ldots\%
+\item[* /] multiply, divide
+\item[+ - ?] addition, subtraction, documentation
+\item[< > <= >= == !=] comparison operators
+\item[!] logical negation
+\item[\& \&\&] logical operators
+\item[\protect\UseVerb{pi} \protect{\UseVerb{pi}\UseVerb{pi}}] logical operators
+\item[\protect\UseVerb{ti}] formula
+\item[\protect\UseVerb{aas}<-] assignment within a function
+\item[<-] assignment
+\end{Rlist}
+\end{newsbttl}
+% _________________________________ Missing, indefinite...
+\sbttl{missing, indefinite, infinite values}
+\begin{newsbttl}
+\begin{Rlist}
+\item[NA] Not Available\\
+The value \Verb|NA| marks a ``not avalailable'' or ``missing'' value.
+Missing values are handeled differently by different functions. Many function have an argument like \Verb|na.rm=TRUE| to remove missing values. Other functions ignore the total row of a data frame if it contains missing values.
+\item[NaN] Not a Number\\
+\begin{Verbatim}
+1/0 - 1/0                               : NaN
+\end{Verbatim}
+\item[Inf] Infinity\\
+\begin{Verbatim}
+1/0                                     : Inf
+\end{Verbatim}
+\end{Rlist}
+\end{newsbttl}
+%_________________________________ GLM families
+\sbttl{glm families}
+\begin{newsbttl}
+\begin{tabular}{lll}
+family&accepted links&\\
+\Verb|gaussian|&\Verb|identity|&\\
+&\Verb|log|\\
+&\Verb|inverse|\\
+%
+\Verb|binomial|&\Verb|logit|&(logistic)\\
+&\Verb|probit|&(normal)\\
+&\Verb|cauchit|\\
+&\Verb|log|\\
+&\Verb|cloglog|&complementary log-log\\
+%
+\Verb|Gamma|&\Verb|inverse|\\
+&\Verb|identity|\\
+&\Verb|log|\\
+%
+\Verb|poisson|&\Verb|log|\\
+&\Verb|identity|\\
+&\Verb|sqrt|\\
+%
+\Verb|inverse.gaussian|&\Verb|1/mu^2|\\
+&\Verb|inverse|\\
+&\Verb|identity|\\
+&\Verb|log|\\
+\end{tabular}
+
+Note: Models with the same linear predictor, $\eta$, but with different link functions, $g$, can be compared informally, but not tested, by comparing the residual deviance.
+\end{newsbttl}
+%_________________________________ recycling rule
+\sbttl{recycling rule}
+\begin{newsbttl}
+In expressions that combine long and a short vectors, the shorter vectors are \emph{recycled} until they match the length of the longest one. Fractional recycling is allowed but will print a warning message.
+\begin{Verbatim}
+x <- c(2,3,4,5)               # a vector of length 4
+y <- 2                        # a vector of length 1
+z <- c(3,4,5)                 # a vector of length 3
+x*y                           : [1]  4  6  8 10
+                              # a vector of length 4
+x*z                           : [1]  6 12 20 15
+                              : Warning message:
+                              : longer object length
+                              :        is not a multiple of shorter object length in: x * z 
+                              # a vector of length 4 (with a warning!)
+\end{Verbatim}
+\end{newsbttl}
+%_________________________________ labelling axes
+\sbttl{labelling axes}
+\begin{newsbttl}
+\myitem{strings with a special meaning}
+\begin{Rlist}
+  \SaveVerb{newline}=\n=
+  \SaveVerb{tab}=\t=
+%\item[\protect\UseVerb{dol}] list extraction
+\item[\protect\UseVerb{newline}] new line
+\item[\protect\UseVerb{tab}] tabulator
+\end{Rlist}
+
+\myitem{For an overview of possible mathematical notation see:}
+\begin{Verbatim}
+demo(plotmath)
+\end{Verbatim}
+
+\myplot{}{Some examples of the usage of the function expression. If you need to put labels on several lines it is often easier to use several calls to the low level function \Rfunc{mtext} than creating one label that spans over several lines.}{plots/example4.pdf}
+\end{newsbttl}
+%_________________________________ ANOVA TABLE
+\sbttl{Satterthwaite}
+\begin{newsbttl}
+%
+\newcommand{\sire}{ \mathsf{A} } %the name of the effect
+\newcommand{\sireNO}{A} %NO for number
+\newcommand{\sireSM}{\mathrm{a}} %NO for simple model
+\newcommand{\sireID}{a} %ID for index
+\newcommand{\dam}{ \mathsf{B} }
+\newcommand{\damNO}{B}
+\newcommand{\damID}{\mathrm{b}}
+\newcommand{\damSM}{\mathrm{b}} %dam for simple model
+\newcommand{\fullsibs}{\mathsf{I}}
+\newcommand{\fullsibsNO}{I}
+\newcommand{\fullsibsID}{\mathrm{i}}
+\newcommand{\fullsibsSM}{\mathrm{i}} %fullsibs for simple model
+\newcommand{\resid}{ \mathsf{R} }
+%
+\ctable[caption	= ANOVA table for balanced data 	,
+		label	= tab:anova		,
+		pos		= t b p h		,
+		width	= \textwidth		,
+]{l >{$}l<{$} >{$\qquad}l<{$} >{$\qquad}l<{$}}{%
+}{
+	  																											\FL
+	&	\multicolumn{1}{l}{df}	&	\textrm{Mean Squares (MS)}
+		&	E(\textrm{MS)}														\ML
+factor $\sire$&	\sireNO-1								
+& 	\displaystyle\sum_{\sireID=1}^{\sireNO} \sum_{\damID=1}^{\damNO}\fullsibsNO(\bar{z}_\sireID - \bar{z})^2\;/\;\textrm{df}_{\sire}		
+&	\sigma^2_{\resid} + \fullsibsNO\sigma^2_{\dam} + \fullsibsNO\damNO\sigma^2_{\sire}		\NN
+factor $\dam$	&	\sireNO({\damNO}-1) 					
+&	\displaystyle\sum_{\sireID=1}^{\sireNO} \sum_{\damID=1}^{\damNO}\fullsibsNO(\bar{z}_{\sireID\damID} - \bar{z}_\sireID)^2\;/\;\textrm{df}_{\dam}		
+&	\sigma^2_{\resid} + \fullsibsNO\sigma^2_{\dam}							\NN
+residual, $\resid$&	T-\sireNO{\damNO}						
+&	\displaystyle\sum_{\sireID=1}^{\sireNO} \sum_{\damID=1}^{\damNO}\sum_{i=1}^{\fullsibsNO}(z_{\sireID\damID\fullsibsID} - \bar{z}_{\sireID\damID})^2\;/\;\textrm{df}_{\resid}		
+&	\sigma^2_{\resid}												\NN
+																												\LL
+}
+
+where\\
+factor $\sire$ with the levels $(\sireID= 1, 2, \ldots, \sireNO)$\\
+factor $\dam$ with the levels $(\damID= 1, 2, \ldots, \damNO)$ in every level of the factor $\sire$\\
+and for every level of the factor $\dam$ the replicates $(\fullsibsID= 1, 2, \ldots, \fullsibsNO)$\\
+and $T$ is the total number of measurements, $z$.
+\end{newsbttl}
+%_________________________________ Satterthwaite
+\sbttl{Satterthwaite}
+\begin{newsbttl}
+Very often approximate intervals on sums of expected mean squares are constructed using the Satterthwaite procedure (first proposed by Smith 1936 and later by Satterthwaite 1941 and \citet{Satt46}).
+It was developed to estimate the distribution of sums of expected mean squares, where expected mean squares are a linear combination of variance components.
+This approach is based on a chi-squared approximation of the estimator for $\gamma$, $\hat{\gamma}=\sum_i{c_is^2_i}$.
+One determines the value of $m$ that equates the first two moments of $m\hat{\gamma}/\gamma$ to those of a chi-squared random variable with $m$ degrees of freedom.
+
+\begin{equation}
+m=\frac{\hat{\gamma}^2}%
+  {\sum_i{\frac{c_i^2s_i^4}{n_i}}}
+\end{equation}
+
+This approximation works well when the $n_i$ values are all equal or all large.
+However, when differences among the $n_i$ are large, the Satterthwaite approximation can produce unacceptably liberal confidence intervals. Lower intervals (upper bounds) are more liberal than upper intervals (lower bounds). This approximation should not be used if some $c_i$ are negative and some are positive \citep{Burd92}. 
+\end{newsbttl}
+%_________________________________studentized residuals
+\sbttl{some useful results}
+\begin{newsbttl}
+
+$\hat{y}_i$ is determined by $\frac{1}{h_{ii}}$ observations ($h_{ii}$ is the leverage of the  $i^{\mathrm{th}}$ observation).
+
+\begin{equation}
+\mathrm{var}(e_i) = \sigma^2(1-h_{ii})
+\end{equation}
+% if a point has a large residual, the variance will be lower than the average
+internally studentized residuals:
+\begin{equation}
+e_i^{\prime}=\frac{e_i}{s\sqrt{1-h_{ii}}}
+\end{equation}
+externally studentized residuals:
+(because if an error is very large then $s$ will be too large)
+\begin{equation}
+e_i^{*\prime}=\frac{e_i}{s_{(i)}\sqrt{1-h_{ii}}}
+\end{equation}
+where
+$s_{(i)}$ is calculated with all but the $i^{\mathrm{th}}$ observations.
+
+Because internally and externally studentized residuals are monotonously related you can graphically not distinguish them.
+% \begin{equation}
+% e_i^{*}=\frac{y_i-\hat{y}_{(i)}}{\sqrt{var(y_i-\hat{y}_{(i)})}}
+% \end{equation}
+
+\end{newsbttl}
+% % ___________ PRACTICALS VIII
+% \sbttl{practicals VIII}
+% \begin{newsbttl}
+% \begin{exlist}
+% \item 
+% \setcounter{practicals}{1}
+% <<eval=FALSE>>=
+% @
+
+% \end{exlist}
+% \end{newsbttl}
+% % ___________ PRACTICALS VIII
+% \sbttl{practicals VIII}
+% \begin{newsbttl}
+% \begin{exlist}
+% \item 
+% \setcounter{practicals}{1}
+% <<eval=FALSE>>=
+% @
+
+% \end{exlist}
+% \end{newsbttl}
+% ___________ 
+%_________________________________ EXAM 1
+\ttl{asuR exam}
+\begin{newttl}
+{\footnotesize
+I would like to get a folder called \emph{your\_family\_name} containing one file with \R code that can be processed line by line (\emph{your\_family\_name.R}) and all graphical output (\emph{exercise\_xy.pdf}).\\
+duration: 2 hours $\quad$/$\quad$ materials: everything that is helpful\\
+elegant R syntax (\emph{+1pt}),  clearly structured syntax with comments  (\emph{+1pt})}\\[-10mm]
+\begin{exlist}
+\setcounter{practicals}{0}
+\item The data set ``plants'' shows the height of all species of the Fabaceae and Rosaceae growing in Switzerland together with their growth type.
+\begin{exsblist}
+\item Sort the data frame by \texttt{family}, \texttt{type}, and \texttt{height} (\emph{1pt}).
+\item Select the \texttt{height} of all herbaceous species from the family Fabaceae. Store your selection that you can use it in the following examples (\emph{1pt}).
+\item Construct a histogram with a density line of this selection (pdf $9 \times 13~cm$; \emph{1pt}).
+\item You can see that your selection is not at all normally distributed. Do you find a transformation to normalize your selection? How can you inspect whether your transformed selection is normally distributed; use three different ways to inspect your transformed selection (\emph{2pt}).
+\item Construct a data frame from all Rosaceae  that are of growth type shrub and remove all unused levels for the factors \texttt{family} and \texttt{type}; hint: you can see the levels of a factor with the function \Rfunc{levels} (\emph{2pt}).
+\end{exsblist}
+\end{exlist}
+\end{newttl}
+%_________________________________ EXAM 2
+\begin{nextttl}
+\begin{exlist}
+\setcounter{practicals}{1}
+\item The data set "houseflies" shows the mean duration of development (in days) for 3 strains of houseflies for 2 different treatments.
+\begin{exsblist}
+\item Calculate the mean developmental time for all strain and treatment combinations (\emph{2pt}).
+\item Use a stepwise model selection procedure to find a suitable model, where the response variable \texttt{duration} is explained by the predictors \texttt{treatment} and \texttt{strain} (\emph{1pt}).
+\item You have no \emph{a priory} expectation for the developmental duration of different houseflies strains. Are there two strains that differ significantly from each other in the length of the developmental period (\emph{text}). Plot the simultaneous confidence intervals for all pairwise differences (pdf $9 \times 13~cm$; \emph{2pt}).
+\item Draw three boxplots side by side to compare the duration of the developmental among different housefly strains (pdf $9 \times 13~cm$; \emph{1pt}).
+\end{exsblist}
+\end{exlist}
+\end{nextttl}
+%_________________________________ EXAM 3
+\begin{nextttl}
+\begin{exlist}
+\setcounter{practicals}{2}
+\item The influence of soil nitrogen content on the growth of two different weed species was studied (data set ``growth).
+\begin{exsblist}
+\item Construct a scatter-plot of soil nitrogen content against weight gain. Use a different colour and different plotting symbol for both species (pdf $9 \times 13~cm$; \emph{2pt}).
+\item Make an analysis of covariance to describe the weight gain with increasing nitrogen content for both species. Test whether a model with \emph{a)} different slopes and different intercepts, \emph{b)} one slope and different intercepts, or \emph{c)} one slope and one intercept is needed to describe the response of the two species (\emph{4pt}).
+\item Add the regression line(s) you estimated to the plot you have already constructed under \textbf{a)} (\emph{2pt}).
+\end{exsblist}
+\end{exlist}
+\end{nextttl}
+% %_____________________________________________________________________________ SOLUTIONS
+% \ttl{solutions}
+% \sbttl{asuR exam}
+% \begin{newsbttl}
+% \begin{exlist}
+% \setcounter{practicals}{0}
+% \item
+% <<ex1, eval=FALSE>>=
+% data(plants)
+% @ 
+% \begin{exsblist}
+% \item
+% <<a, eval=FALSE>>=
+% ## ex a)
+%  plants[order(plants$family, plants$type, plants$height),]
+% @ 
+% \item
+% <<b, eval=FALSE>>=
+% ## ex b)
+% x <- plants[plants$family=="Fabaceae", "height"]
+% @ 
+% \item
+% <<c, eval=FALSE>>=
+% ## ex c)
+% pdf("~/Desktop/asuRexam/ex1c.pdf", height=9/2.54, width=13/2.54)
+% hist(x, freq=FALSE)
+% lines(density(x))
+% dev.off()
+% @ 
+% \item
+% <<d, eval=FALSE, echo=TRUE>>=
+% ## ex d)
+% log(x)
+% # normal-quantile plot
+% pdf("~/Desktop/ex1d_nqp.pdf", height=9/2.54, width=13/2.54)
+% qqnorm(log(x))
+% qqline(log(x))
+% dev.off()
+% # the function norm.test()
+% norm.test(log(x))
+% # histogram
+% # density esimate
+% pdf("~/Desktop/ex1d_hist.pdf", height=9/2.54, width=13/2.54)
+% hist(log(x), freq=FALSE)
+% lines(density(log(x)))
+% dev.off()
+% #cumulative density function
+% pdf("~/Desktop/ex1d_cdf.pdf", height=9/2.54, width=13/2.54)
+% plot(ecdf(log(x)))
+% dev.off()
+% @ 
+% \item
+% <<e, eval=FALSE>>=
+% ## e)
+% new <- plants[plants$family=="Rosaceae" & plants$type=="shrub",]
+% str(new)
+% levels(new$family)
+% levels(new$shrub)
+% new$family <- new$family[,drop=TRUE]
+% new$type <- new$type[,drop=TRUE]
+% @ 
+% \end{exsblist}
+% \end{exlist}
+% \end{newsbttl}
+% % ___________ solution 2
+% \begin{nextsbttl}
+% \begin{exlist}
+% \setcounter{practicals}{1}
+% \item
+% <<ex1, eval=FALSE>>=
+% data(houseflies)
+% @ 
+% \begin{exsblist}
+% \item
+% <<a, eval=FALSE>>=
+% ## a)
+% tapply(houseflies$duration, list(houseflies$strain, houseflies$treatment), mean, na.rm=TRUE)
+% @ 
+% \item
+% <<b, eval=FALSE>>=
+% ## b)
+% f.min <- formula(duration ~ 1)
+% f.max <- formula(duration ~ treatment*strain)
+
+% m0 <- aov(duration ~ 1, data=houseflies)
+% add1(m0, scope=f.max, test="F")
+
+% m1 <- update(m0, .~.  + treatment)
+% add1(m1, scope=f.max, test="F")
+
+% m2 <- update(m1, .~. + strain)
+% add1(m2, scope=f.max, test="F")
+
+% m.final <- aov(duration ~ treatment + strain, data=houseflies)
+% @ 
+% \item
+% <<c, eval=FALSE>>=
+% ## c)
+% t <- TukeyHSD(m.final, which="strain")
+% pdf("~/Desktop/asuRexam/ex2c.pdf", height=9/2.54, width=13/2.54)
+% plot(t)
+% dev.off()
+% @ 
+%  YES, the strain 'OL' is significantly larger than 'BE'.
+% \item
+% <<d, eval=FALSE>>=
+% ## d)
+% pdf("~/Desktop/asuRexam/ex2d.pdf", height=9/2.54, width=13/2.54)
+% plot(houseflies$strain, houseflies$duration)
+% dev.off()
+% @ 
+% \end{exsblist}
+% \end{exlist}
+% \end{nextsbttl}
+% % ___________ solution 2
+% \begin{nextsbttl}
+% \begin{exlist}
+% \setcounter{practicals}{2}
+% \item
+% <<ex1, eval=FALSE>>=
+% data(growth)
+% @ 
+% \begin{exsblist}
+% \item
+% <<a), eval=FALSE>>=
+% ## a)
+% pdf("~/Desktop/ex3a.pdf", height=9/2.54, width=13/2.54)
+% plot(growth$gain~growth$nitrogen, type="n")
+% cc <- growth[growth$species=="sp_A",]
+% tt <- growth[growth$species=="sp_B",]
+% points(cc$gain~cc$nitrogen, pch="c", col="red")
+% points(tt$gain~tt$nitrogen, pch="t", col="blue")
+% @ 
+% \item
+% <<b), eval=FALSE>>=
+% ## b)
+% m0 <- lm(gain ~ species + nitrogen, data=growth); summary(m0)
+% m1 <- lm(gain ~ species * nitrogen, data=growth); summary(m1)
+% m1.p <- lm(gain ~ species/nitrogen - 1, data=growth); summary(m1.p)
+% anova(m0, m1)
+% @ 
+% \item
+% <<c), eval=FALSE>>=
+% ## c)
+% abline(a=30, b=0.29, col="red")
+% abline(a=20, b=0.70, col="blue", lty=2)
+% dev.off()
+% @ 
+% \end{exsblist}
+% \end{exlist}
+% \end{nextsbttl}
+% % =============================================================================
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
