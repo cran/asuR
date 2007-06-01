@@ -1,11 +1,11 @@
-inspect <- function(mymodel, which=c("select","all"), id=c("all", "none"), ...){
+inspect <- function(mymodel, which = c("select", "sequence", "all"), id=c("all", "none"), ...){
 standardGeneric("inspect")
 }
 setGeneric("inspect", def=inspect)
 #############################################################################
 ###                                                                        LM
 #############################################################################
-inspect.lm <- function(mymodel, which=c("select","all"), id=c("all", "none"), ...){
+inspect.lm <- function(mymodel, which = c("select", "sequence", "all"), id=c("all", "none"), ...){
   if(any(is.nan(rstudent(mymodel)))){stop("Residuals could not be studentized!!")}
   rpp.id <- rpp(mymodel, id)
   ryp.id <- ryp(mymodel, id)
@@ -20,10 +20,8 @@ setMethod("inspect", "lm", inspect.lm)
 #############################################################################
 ###                                                                       GLM
 #############################################################################
-inspect.glm <- function(mymodel, which=c("select","all"), id=c("all", "none"), ...){
-  which <- match.arg(which)
-  id <- match.arg(id)
-#################################
+inspect.glm <- function(mymodel, which=c("select", "sequence", "all"), id=c("all", "none"), ...){
+ #################################
 ### here is the place to add additional fuctions that should become available for inspect
   plot.names <- data.frame(rbind(
                                  cbind(fullname="deviance residuals vs. linear predictor",         short.function="dep",         long.function="devianceResidual.linearPredictor"),
@@ -33,115 +31,27 @@ inspect.glm <- function(mymodel, which=c("select","all"), id=c("all", "none"), .
                                  ## cbind(fullname="",         short.function="",         long.function=""),
                                  ))
 #################################
-  switch(which,
-         ## which = "all"
-         all = {print(!is.numeric(id)); print(id=="none")
-           if(which=="all"){which.plots <- seq(along=row.names(plot.names))}
-           for(i in seq(along=which.plots)){
-             e.ask <- paste("if(!is.numeric(id)){user.selection <- menu(choices=c(\"yes\",\"no\",\"stop\"), title=\"***\n",plot.names[i,1], "\n   (functions: ",plot.names[i,2]," or ",plot.names[i,3],")\")}else{user.selection <- 1}",sep="")
-#             e.deside <- paste("if(user.selection==0 | user.selection==3){break};if(user.selection==2){next}else{identified.list <- c(identified.list, list(",plot.names[i,2],".id = ", plot.names[i,2],"(mymodel, id=\"", id, "\")))}",sep="")
-             e.deside <- paste("if(user.selection==0 | user.selection==3){break};if(user.selection==2){next}else{",plot.names[i,2],".id <- ", plot.names[i,2],"(mymodel, id=\"",id,"\")}",sep="")
-             ##
-             eval(parse(text=e.ask))
-             eval(parse(text=e.deside))
-           }
-         },
-         ## which = "select"
-         select = {
-           repeat{
-             ## asking the user
-             e.ask <- paste("user.selection <- menu(choices=", escapedDeparse(plot.names[,1]),", title=\"Select the number of the plot you want:\")",sep="")
-             eval(parse(text=e.ask))
-             ## the user selects now
-             if(user.selection==0){break}
-             e.deside <- paste(plot.names[user.selection,2],".id <- ", plot.names[user.selection,2],"(mymodel, id=\"",id,"\")",sep="")
-             eval(parse(text=e.deside))
-           }
-         }
-         )
-  ##
-  # creates a list of identified values, for every plot one slot
-  # and one slot with all values that were selected at least once
-  identified.list <- list()
-  identified.all <- 0
-  for (i in eval(parse(text=escapedDeparse(plot.names[,2])))){
-    if(exists(paste(i, ".id", sep=""))){
-      this.values <- eval(parse(text=paste(i, ".id", sep="")))#;print(this.values)
-      identified.list <- c(identified.list, eval(parse(text=paste("list(", i, " = ", i, ".id)", sep=""))))
-      ##identified.list <- c(identified.list, if(exists(paste(i, ".id", sep=""))){eval(parse(text=paste("list(", i, " = ", i, ".id)", sep="")))})
-      identified.all <- c(identified.all, this.values[!this.values%in%identified.all])#c <- c(c, b[!b%in%c])
-    }
-  }
-  identified.list <- c(identified.list, list(all=sort(identified.all[-1])))
-  invisible(identified.list)
-  ##
+  workhorse(mymodel=mymodel, which=which, id=id, plot.names=plot.names)
 }
 setMethod("inspect", "glm", inspect.glm)
+#############################################################################
+###                                                                      LMER
+#############################################################################
+inspect.lmer <- function(mymodel, which=c("select", "sequence", "all"), id=c("all", "none"), ...){
 #################################
-###                           end
+### here is the place to add additional fuctions that should become available for inspect
+  plot.names <- data.frame(rbind(
+                                 cbind(fullname="Normal quantile quantile plot of residuals by levles of categorical fixed effects",         short.function="nrp",         long.function="NormalQuantiles.Residuals.CategoricalFixedEffects"),
+                                 cbind(fullname="Box- or dotplot of residuals by levels, for each random factor",         short.function="rgp",         long.function="residuals.by.groups"),
+                                 cbind(fullname="Residuals vs. fitted values for all categorical fixed effects",         short.function="rfp",         long.function="Residuals.Fitted.CategoricalFixedEffects"),
+                                 cbind(fullname="Normal quantile quantile plot of random effects, for each factor",         short.function="nep",         long.function="NormalQuantiles.RandomEffectsQuantiles")
+                                 ## cbind(fullname="",         short.function="",         long.function=""),
+                                 ))
 #################################
-
-
-
-
-
-
-
-
-## switch(user.selection, 
-## #  plot.names <- "c(\"partial residual vs. each predictor\", \"deviance residuals vs. linear predictor\")"
-  
-
-
-
-  
-
-##     e.ask <- paste("if(!is.numeric(id)&&id==\"none\"){user.selection <- menu(choices=c(\"yes\",\"no\",\"stop\"), title=\")\")}else{user.selection <- 1}",sep="")
-  
-##   identified.list <- list()
-##   for(i in seq(along=which.plots)){
-##     e.ask <- paste("if(!is.numeric(id)&&id==\"none\"){user.selection <- menu(choices=c(\"yes\",\"no\",\"stop\"), title=\"",plot.names[i,1], "(",plot.names[i,2]," or ",plot.names[i,3],")\")}else{user.selection <- 1}",sep="")
-##     e.deside <- paste("if(user.selection==0 | user.selection==3){break};if(user.selection==2){next}else{identified.list <- c(identified.list, list(",plot.names[i,2],".id = ", plot.names[i,2],"(mymodel, id)))}",sep="")
-##     ##
-##     print(i)
-##     eval(parse(text=e.ask))
-##     eval(parse(text=e.deside))
-##   }
-##   identified.list
-##   #invisible(list())
-## }
-                    
-##   dep.id <- dep(mymodel, id)
-##   ##
-##   eval(parse(text=))
-##   ##
-
-##   if(user.selection==1){
-##     rpp.id <- rpp(mymodel, id)
-##   }
-##   ##   yep.id <- yep.glm(mymodel, id)
-##   ##   nrp.id <- nrp.glm(mymodel, id)
-##   ##  return(list(rep.glm=rep.id, rpp.glm=rpp.id, yep.glm=yep.id, nrp.glm=nrp.id))
-##   ##  last.warning <- character()  # this did not help 
-## }
-
-
-
-
-
-## ## inspect <- function(mymodel, id=c("none","all")){
-## ##   possible.classes <- "aov, lm, glm")
-## ##   ##
-## ##   this.class <- class(mymodel)[1]
-## ##   LM.model <- FALSE
-## ##   GLM.model <- FALSE
-## ##   ##  
-## ##   if( this.class=="lm" | this.class=="aov"){
-## ##     LM.model <- TRUE
-## ##   }else{
-## ##     if( this.class=="glm" ){
-## ##       GLM.model <- TRUE
-## ##     }else{
-## ##       stop(paste("inspect works only for models fitted with the functions: ", possible.classes, sep=", "))
-## ##     }
-## ##   }
+  workhorse(mymodel=mymodel, which=which, id=id, plot.names=plot.names)
+}
+setMethod("inspect", "lmer", inspect.lmer)
+#setMethod("inspect", "glmer", inspect.lmer)
+#############################################################################
+###                                                                       END
+#############################################################################

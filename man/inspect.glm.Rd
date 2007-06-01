@@ -6,7 +6,7 @@ This functions can be used to validate some assumptions of generalized linear
 models.
 }
 \usage{
-\method{inspect}{glm}(mymodel, which = c("select", "all"), id = c("all", "none"), ...)
+\method{inspect}{glm}(mymodel, which = c("select", "sequence", "all"), id = c("all", "none"), ...)
 }
 \arguments{
   \item{mymodel}{an object of class \code{glm}, usually the result of a
@@ -33,10 +33,15 @@ for each inspection function and an additional slot (called all) with
 all values that were selected at lest in one plot.
 }
 \author{\email{thomas.fabbro@unibas.ch}}
+\note{
+  This functions help to inspect glm's with continuous predictors,
+  sometimes they are anyway informative also for categorical predictors
+  ...
+}
 \seealso{plot}
 \examples{
- data(mytrees)
- model <- lm(log(Volume) ~ log(Girth) + log(Height),  data=mytrees)
-## inspect(model)
+##  data(gala)
+##  model <- glm(Species ~ log(Area) + log(Elevation) + log(Nearest) + log(Scruz+0.1) + log(Adjacent), family=poisson(link=log), data=gala)
+##  inspect(model)
 }
 \keyword{file}

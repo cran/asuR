@@ -4,7 +4,19 @@
 ## This generic function should extract a number of elements from a
 ## fitted-model-object. For a given class it should always provide the same
 ## elements (they are listed at the beginning of the corresponding definition)
-
+##
+## some definitions:
+##
+## 'terms' are the names of variables (response or predicots) WITH the transformation
+## 'vars' are the names of the variables (response or predicotrs)
+##        this distintion is only important for numeric variables,
+##        therefore there should always be:
+##        - terms.factor
+##        - terms.numeric
+##        - vars.numeric
+##          (vars.factor would be the same because it is not possible to transform a factor)
+##         
+#################################
 parseFormula <- function(mymodel, ...){
 standardGeneric("parseFormula")
 }
@@ -85,15 +97,51 @@ setMethod("parseFormula", "glm", parseFormula.glm)
 #############################################################################
 ###                                                                      LMER
 #############################################################################
-## parseFormula.lmer <- function(mymodel, ...){
-## ### ===========
-## ### mydata
-##   my.data <<- mymodel@frame
-## ### response.values
-## #  eval(parse(text=paste("response.values <<- my.data$",response.var,sep="")))
-## ### intercept
-##   intercept.logical <<- as.logical(attr(attr(mymodel@frame, "terms"), "intercept"))
-## }
-## ### =========== method
-## setMethod("parseFormula", "lmer", parseFormula.lmer)
-## #############################################################################
+parseFormula.lmer <- function(mymodel, ...){
+### ===========notes:
+  ## all.vars(formula(mymodel)) : gives random and fixed factor
+### mydata
+  my.data <- mymodel@frame # it is exported at the very end because there are columns that are added
+  ## response.values
+                                        #  eval(parse(text=paste("response.values <<- my.data$",response.var,sep="")))
+  ## intercept
+  intercept.logical <<- as.logical(attr(mymodel@terms, "intercept"))
+  ## all vars (fixed&random) without the intercept if present
+  vars <- all.vars(formula(mymodel))[-attr(attr(mymodel@frame, "terms"), "intercept")]
+  ##
+
+### group
+  group.vars <<- names(unlist(mymodel@cnames))
+  effect.vars <<- unlist(mymodel@cnames)
+### random
+  rand.terms <- names(mymodel@flist)
+  im <- match(vars, rand.terms)
+  rand.vars <- vars[im]
+  rand.vars <- rand.vars[!is.na(rand.vars)]
+  rand.vars <<- names(mymodel@flist)
+  ## nested
+  nested.index <- grep(":", rand.terms)
+  rand.vars.nested <- rand.terms[nested.index]
+  ## now we contrstuct these factors and add them to the data.frame
+  for.new <- strsplit(rand.vars.nested, ":")
+  for (j in seq(along=for.new)){ # elements in the list
+    cc <- paste("my.data[,\"", for.new[[j]], "\"]", sep="")
+    eval(parse(text=paste("my.data <- cbind(my.data, \"", rand.vars.nested[j],"\" = ",escapedDeparse2(cc),")", sep="")))
+  }
+  ## fixed terms without the intercept if present
+  fixed <- attr(mymodel@terms, "dataClasses")[-1]# to remove the response
+  fixed.terms.numeric <<- attr(fixed, "names")[fixed=="numeric"]
+  fixed.terms.factor <<- attr(fixed, "names")[fixed=="factor"]
+  ## ! a work around to get all fixed.vars.numeric
+  ## assuming that beside the intercept NO other numeric terms exist
+  terms.class <- attr(attr(mymodel@frame, "terms"), "dataClasses")
+  m <- match(vars, names(terms.class))
+  vars.class <- terms.class[m]
+  fixed.vars.numeric <- vars[vars.class=="numeric"]
+  fixed.vars.numeric <<- fixed.vars.numeric[!is.na(fixed.vars.numeric)]
+  ## export my.data
+  my.data<<-my.data
+}
+### =========== method
+setMethod("parseFormula", "lmer", parseFormula.lmer)
+#############################################################################

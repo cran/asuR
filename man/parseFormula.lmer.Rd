@@ -1,11 +1,11 @@
-\name{parseFormula.glm}
-\alias{parseFormula.glm}
+\name{parseFormula.lmer}
+\alias{parseFormula.lmer}
 \title{providing names and data from model objects}
 \description{
 internal use only
 }
 \usage{
-\method{parseFormula}{glm}(mymodel, ...)
+\method{parseFormula}{lmer}(mymodel, ...)
 }
 \arguments{
   \item{mymodel}{ a fitted model object }

@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99c (Web2C 7.5.5)
+The top-level auxiliary file: coursenotes.aux
+The style file: DISS1a.bst
+Reallocated str_pool (elt_size=1) to 130000 items from 65000.
+Reallocated str_pool (elt_size=1) to 195000 items from 130000.
+Reallocated str_pool (elt_size=1) to 260000 items from 195000.
+Database file #1: stats.bib
+Database file #2: BIOarticles.bib
+You've used 7 entries,
+            2867 wiz_defined-function locations,
+            13187 strings with 256614 characters,
+and the built_in function-call counts, 3575 in all, are:
+= -- 310
+> -- 110
+< -- 7
++ -- 45
+- -- 36
+* -- 280
+:= -- 566
+add.period$ -- 14
+call.type$ -- 7
+change.case$ -- 40
+chr.to.int$ -- 7
+cite$ -- 7
+duplicate$ -- 267
+empty$ -- 295
+format.name$ -- 63
+if$ -- 715
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 53
+newline$ -- 32
+num.names$ -- 28
+pop$ -- 105
+preamble$ -- 1
+purify$ -- 40
+quote$ -- 0
+skip$ -- 98
+stack$ -- 0
+substring$ -- 147
+swap$ -- 140
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 51
+warning$ -- 0
+while$ -- 26
+width$ -- 0
+write$ -- 83

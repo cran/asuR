@@ -1,0 +1,39 @@
+\begin{thebibliography}{7}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[{\textsc{Burdick \& Graybill}(1992)}]{Burd92}
+\textsc{Burdick, R.~K. \& Graybill, F.~A.} (1992): Confidence Intervals on
+  Variance Components.
+\newblock Marcel Dekker, New York.
+
+\bibitem[{\textsc{{Cleveland, William S.} \& {McGill, Robert}}(1985)}]{Clev85}
+\textsc{{Cleveland, William S.} \& {McGill, Robert}} (1985): Graphical
+  Perception and Graphical Methods for Analyzing Scientific Data.
+\newblock Science \textbf{229}(4716):828--833.
+
+\bibitem[{\textsc{{Cook, Richard J.} \& {Farewell, Vern T.}}(1996)}]{Cook96}
+\textsc{{Cook, Richard J.} \& {Farewell, Vern T.}} (1996): Multiplicity
+  Considerations in the Design and Analysis of Clinical Trials.
+\newblock Journal of the Royal Statistical Society. Series A (Statistics in
+  Society) \textbf{159}(1):93--110.
+
+\bibitem[{\textsc{Murrell}(2005)}]{Murr05}
+\textsc{Murrell, P.} (2005): R Graphics.
+\newblock Chapman \& Hall.
+
+\bibitem[{\textsc{Pinheiro \& Bates}(2000)}]{Pinh00}
+\textsc{Pinheiro, J.~C. \& Bates, D.~M.} (2000): Mixed-effects models in S and
+  S-PLUS.
+\newblock Springer-Verlag New York.
+
+\bibitem[{\textsc{Satterthwaite}(1946)}]{Satt46}
+\textsc{Satterthwaite, F.~E.} (1946): An Approximate Distribution of Estimates
+  of Variance Components.
+\newblock Biometric Bull \textbf{2}(6):110--114.
+
+\bibitem[{\textsc{Sokal \& Rohlf}(1995)}]{Soka95}
+\textsc{Sokal, R.~R. \& Rohlf, J.~F.} (1995): Biometry: the principles and
+  practice of statistics in biological research.
+\newblock Freeman, New York.
+
+\end{thebibliography}

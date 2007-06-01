@@ -1,5 +1,6 @@
 \name{escapedDeparse}
 \alias{escapedDeparse}
+\alias{escapedDeparse2}
 \title{escapedDeparse}
 \description{
 creates a string out of character vector where the individual elemets
